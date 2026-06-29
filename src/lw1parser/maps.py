@@ -1,24 +1,24 @@
 # https://www.ufopaedia.org/Dev_Console_(Long_War)#Perks
 # And formatted with Copilot
 UPGRADE_MAP = {
-	0: "None",
+	0: "0th Upgrade item",
 	1: "So Shall You Fight",
 	2: "Precision Shot",
-	3: "SquadSight",
+	3: "Squadsight",
 	4: "Secondary Heart",
 	5: "Low Profile",
-	6: "Run And Gun",
+	6: "Run & Gun",
 	7: "Autopsy Required",
 	8: "Battle Scanner",
 	9: "Disabling Shot",
 	10: "Opportunist",
 	11: "Executioner",
-	12: "Officer",
+	12: "Officer",  # Command?
 	13: "Double Tap",
-	14: "In The Zone",
+	14: "In the Zone",
 	15: "Damn Good Ground",
-	16: "Snap Shot",
-	17: "Will To Survive",
+	16: "Snapshot",
+	17: "Will to Survive",
 	18: "Fire Rocket",
 	19: "Holo-Targeting",
 	20: "Adrenal Neurosympathy",
@@ -27,7 +27,7 @@ UPGRADE_MAP = {
 	23: "Rapid Reaction",
 	24: "Grenadier",
 	25: "Danger Zone",
-	26: "Ready For Anything",
+	26: "Ready for Anything",
 	27: "Extra Conditioning",
 	28: "Neural Damping",
 	29: "Neural Feedback",
@@ -59,7 +59,7 @@ UPGRADE_MAP = {
 	55: "Savior",
 	56: "Revive",
 	57: "Elevated Ground",
-	58: "Lock N’ Load",
+	58: "Lock N' Load",
 	59: "Sapper",
 	60: "Suppressed",
 	61: "Critically Wounded",
@@ -92,8 +92,8 @@ UPGRADE_MAP = {
 	88: "Bloodlust",
 	89: "Bullrush",
 	90: "HEAT Ammo",
-	91: "Smoke And Mirrors",
-	92: "Shock and Awe",
+	91: "Smoke & Mirrors",
+	92: "Shock & Awe",
 	93: "Mayhem",
 	94: "Ranger",
 	95: "Concealment",
@@ -127,7 +127,7 @@ UPGRADE_MAP = {
 	123: "Shaped Armor",
 	124: "Sentinel Module",
 	125: "Alien Grenades",
-	126: "Light ‘Em Up",
+	126: "Light 'Em Up",
 	127: "Stealth (Seeker)",
 	128: "Ghost Mode",
 	129: "Reaper Rounds",
@@ -144,7 +144,7 @@ UPGRADE_MAP = {
 	140: "Fortiores Una",
 	141: "Platform Stability",
 	142: "Absorption Fields",
-	143: "Shock Absorbent Armor",
+	143: "Shock-Absorbent Armor",
 	144: "Reactive Targeting Sensors",
 	145: "Body Shield",
 	146: "Distortion Field",
@@ -176,12 +176,44 @@ UPGRADE_MAP = {
 	172: "None",
 }
 
+UPGRADE_MAP_REVERSE = {v: k for k, v in UPGRADE_MAP.items()}
+
+def UPGRADE_TO_ID(name: str) -> int:
+    return UPGRADE_MAP_REVERSE[name]
+
 CLASS_MAP = {
 	"eSC_Sniper": "Scout-Sniper",
 	"eSC_Assault": "Tactical",
 	"eSC_HeavyWeapons": "Weapons",
 	"eSC_Support": "Support",
 	"eSC_None": "Rookie"
+}
+
+CLASS_TYPES = {
+    "Unranked": CLASS_MAP.values(),
+    "Biological": [
+        "Scout", "Sniper",
+        "Infantry", "Assault",
+        "Gunner", "Rocketeer",
+        "Medic", "Engineer"
+	],
+    "MEC": [
+        "Pathfinder", "Jaeger",
+        "Valkyrie", "Marauder",
+        "Goliath", "Archer",
+        "Guardian", "Shogun"
+	],
+}
+
+RANK_MAP = {
+    0: "Rookie",
+    1: "Specialist",
+    2: "Lance Corporal",
+    3: "Corporal",
+    4: "Sergeant",
+    5: "Tech Sergeant",
+    6: "Gunnery Sergeant",
+    7: "Master Sergeant"
 }
 
 MEDAL_MAP = {
@@ -193,7 +225,16 @@ MEDAL_MAP = {
 	5: "Field Commander",
 }
 
-OFFICER_MAP = {
+PSI_RANK_MAP = {
+    1: "Awakened",
+    2: "Sensitive",
+    3: "Talent",
+    4: "Adept",
+    5: "Psion",
+    6: "Master",
+}
+
+OFFICER_PERK_MAP = {
     1: "So Shall You Fight",
     12: "Officer",
     122: "Stay Frosty",
@@ -207,7 +248,7 @@ OFFICER_MAP = {
 	161: "Into the Breach",
 }
 
-PSI_MAP = {
+PSI_PERK_MAP = {
     29: "Neural Feedback",
     49: "Pyrokinesis",
     68: "Mindfray",
@@ -245,18 +286,18 @@ GENE_MAP = {
 
 PERK_MAP = {
     2: "Precision Shot",
-	3: "SquadSight",
+	3: "Squadsight",
     5: "Low Profile",
-	6: "Run And Gun",
+	6: "Run & Gun",
     8: "Battle Scanner",
 	9: "Disabling Shot",
 	10: "Opportunist",
 	11: "Executioner",
     13: "Double Tap",
-	14: "In The Zone",
+	14: "In the Zone",
 	15: "Damn Good Ground",
-	16: "Snap Shot",
-	17: "Will To Survive",
+	16: "Snapshot",
+	17: "Will to Survive",
 	18: "Fire Rocket",
 	19: "Holo-Targeting",
     21: "Suppression",
@@ -264,7 +305,7 @@ PERK_MAP = {
 	23: "Rapid Reaction",
 	24: "Grenadier",
 	25: "Danger Zone",
-	26: "Ready For Anything",
+	26: "Ready for Anything",
 	27: "Extra Conditioning",
     31: "Sprinter",
 	32: "Aggression",
@@ -286,7 +327,7 @@ PERK_MAP = {
 	54: "Sentinel",
 	55: "Savior",
 	56: "Revive",
-    58: "Lock N’ Load",
+    58: "Lock N' Load",
 	59: "Sapper",
     61: "Critically Wounded",
     64: "HEAT Warheads",
@@ -302,8 +343,8 @@ PERK_MAP = {
     88: "Bloodlust",
 	89: "Bullrush",
 	90: "HEAT Ammo",
-	91: "Smoke And Mirrors",
-	92: "Shock and Awe",
+	91: "Smoke & Mirrors",
+	92: "Shock & Awe",
 	93: "Mayhem",
 	94: "Ranger",
     95: "Concealment",
@@ -317,7 +358,7 @@ PERK_MAP = {
     114: "Fire In the Hole",
     116: "Deadeye",
     121: "MEC Close Combat",
-    126: "Light ‘Em Up",
+    126: "Light 'Em Up",
 	127: "Stealth (Seeker)",  # Unlimited Cloak ability?
     131: "Collateral Damage",
 	132: "Automated Threat Assessment",
@@ -325,11 +366,10 @@ PERK_MAP = {
 	134: "Damage Control",
 	135: "Vital Point Targeting",
     136: "One For All",
-    138: "Combined Arms",  # Can also be a Medal[5] ability
     139: "Repair Servos",
     141: "Platform Stability",
 	142: "Absorption Fields",
-	143: "Shock Absorbent Armor",
+	143: "Shock-Absorbent Armor",
 	144: "Reactive Targeting Sensors",
     150: "Field Surgeon",
     153: "Sharpshooter",
@@ -341,8 +381,7 @@ PERK_MAP = {
 }
 
 # Perks granted by foundry research
-# Also stored in m_arrFoundryUnlocks but I'm currently unsure of the mapping
-FOUNDRY_MAP = {
+FOUNDRY_PERK_MAP = {
     109: "Scope (Foundry)",
 	110: "Pistol I (Foundry)",
 	111: "Pistol II (Foundry)",
@@ -374,7 +413,7 @@ COMBAT_MAP = {
     130: "Disoriented",
     151: "EXALT Comm Hack",
     164: "Catching Breath",  # Seeker choke recovery
-    169: "Electropulsed",  # Caused by MEC Electro Pulse
+    169: "Electropulsed",  # Caused by MEC Electro Pulse equipment
     170: "Nearby Officer",
     171: "Lead By Example",
 }
@@ -385,9 +424,141 @@ MISC_MAP = {
 	0: "Upgrade[0] is None",  # Upgrade array is 1-indexed?
     46: "Random Subclass",
     79: "Evasion", # ???
-    129: "Reaper Rounds",  # From Reaper Pack equipment?
+    129: "Reaper Rounds",  # From Reaper Pack equipment
     137: "Jetboot Module",  # From the MEC suit
     145: "Body Shield",  # From the MEC suit
     163: "Aiming Angles (bonus)",  # Second Wave
     172: "Upgrade[172] is None", # Placeholder?
+}
+
+# Foundry items in m_arrFoundryHistory
+FOUNDRY_UNLOCK_MAP = {
+    0: "0th Foundry item",
+    1: "Enhanced Ballistics",
+    2: "Alien Grenades",
+    3: "Improved Medikit",
+    4: "Improved Arc Thrower",
+    5: "Advanced Repair",
+    6: "Enhanced Lasers",
+    7: "Enhanced Plasma",
+    8: "Field Repairs",
+    9: "Drone Capture",
+    10: "Ammo Conservation",
+    11: "Advanced Flight",
+    12: "Armored Fighters",
+    13: "Mag Pistols",
+    14: "Rail Pistols",
+    15: "Reflex Pistols",
+    16: "Shiv Suppression",
+    17: "Stealth Satellites",
+    18: "SCOPE Upgrade",
+    19: "Jellied Elerium",
+    20: "MEC Close Combat",
+    21: "Advanced Servomotors",
+    22: "Shaped Armor",
+    23: "Sentinel Drone",
+    24: "Tactical Rigging",
+    25: "Alien Metallurgy",
+    26: "Aircraft Boosters",
+    27: "Wingtip Sparrowhawks",
+    28: "Penetrator Weapons",
+    29: "Mechanized Unit Defense",
+    30: "Advanced Surgery",
+    31: "Improved Avionics",
+    32: "UFO Countermeasures",
+    33: "Elerium Afterburners",
+    34: "Supercapacitors",
+    35: "UFO Tracking",
+    36: "MEC Warfare Systems",
+    37: "Super Skyranger",
+    38: "Alien Nucleonics",
+    39: "Improved Salvage",
+    40: "New Combat Systems",
+    41: "Psi Warfare Systems",
+    42: "Security Training: Weapons",
+    43: "Security Training: Armor",
+    44: "Phoenix Coilguns",
+    45: "UFO Scanners",
+    46: "Quenchguns",
+}
+
+# Research items in m_arrResearched
+RESEARCH_UNLOCK_MAP = {
+    0: "eTech_None",
+    1: "eTech_Xenobiology",
+    2: "eTech_ArcThrower",
+    3: "eTech_BaseShard",
+    4: "eTech_PsiLabs",
+    5: "eTech_Firestorm",
+    6: "eTech_AutopsySectoidCommander",
+    7: "eTech_Hyperwave",
+    8: "eTech_PsiLink",
+    9: "eTech_WeaponFragments",
+    10: "eTech_AlienMaterials",
+    11: "eTech_Exp_Warfare",
+    12: "eTech_Elerium",
+    13: "eTech_Meld",
+    14: "eTech_PsiArmor",
+    15: "eTech_Armor_Carapace",
+    16: "eTech_Armor_Skeleton",
+    17: "eTech_Armor_Titan",
+    18: "eTech_Armor_Ghost",
+    19: "eTech_Armor_ArchAngel",
+    20: "eTech_LaserWeapons",
+    21: "eTech_PrecisionLasers",
+    22: "eTech_HeavyLasers",
+    23: "eTech_Plasma_Pistol",
+    24: "eTech_Plasma_Light",
+    25: "eTech_Plasma_Rifle",
+    26: "eTech_Plasma_Heavy",
+    27: "eTech_Plasma_Sniper",
+    28: "eTech_Alloy_Cannon",
+    29: "eTech_Plasma_Cannon",
+    30: "eTech_Fusion_Launcher",
+    31: "eTech_BlasterLauncher",
+    32: "eTech_AlienNavigation",
+    33: "eTech_UFOPowerSource",
+    34: "eTech_EMP",
+    35: "eTech_InterrogateSectoid",
+    36: "eTech_InterrogateFloater",
+    37: "eTech_InterrogateMuton",
+    38: "eTech_InterrogateSectoidCommander",
+    39: "eTech_InterrogateBerserker",
+    40: "eTech_InterrogateThinMan",
+    41: "eTech_InterrogateHeavyFloater",
+    42: "eTech_InterrogateMutonElite",
+    43: "eTech_InterrogateEthereal",
+    44: "eTech_AutopsySectoid",
+    45: "eTech_AutopsyFloater",
+    46: "eTech_AutopsyThinMan",
+    47: "eTech_AutopsyMuton",
+    48: "eTech_AutopsyCryssalid",
+    49: "eTech_AutopsyZombie",
+    50: "eTech_AutopsyCyberdisc",
+    51: "eTech_AutopsyBerserker",
+    52: "eTech_AutopsyHeavyFloater",
+    53: "eTech_AutopsyMutonElite",
+    54: "eTech_AutopsyDrone",
+    55: "eTech_AutopsySectopod",
+    56: "eTech_AutopsyEthereal",
+    57: "eTech_AutopsyMechtoid",
+    58: "eTech_AutopsySeeker",
+    59: "eTech_Autopsy_END",
+    60: "eTech_Placeholder",
+    61: "eTech_Placeholder_1",
+    62: "eTech_Placeholder_2",
+    63: "eTech_Placeholder_3",
+    64: "eTech_Placeholder_4",
+    65: "eTech_Placeholder_5",
+    66: "eTech_Placeholder_6",
+    67: "eTech_Placeholder_7",
+    68: "eTech_Placeholder_8",
+    69: "eTech_Placeholder_9",
+    70: "eTech_Placeholder_10",
+    71: "eTech_Placeholder_11",
+    72: "eTech_Placeholder_12",
+    73: "eTech_Placeholder_13",
+    74: "eTech_Placeholder_14",
+    75: "eTech_Placeholder_15",
+    76: "eTech_MAX",
 }

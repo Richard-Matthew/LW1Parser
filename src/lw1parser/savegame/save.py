@@ -1,10 +1,9 @@
 from lw1parser.config import Config
 from .locator import _Locator
 from .converter import _Converter
-from .parser import _Parser
+from .parser import Parser
 
 from pathlib import Path
-import os
 
 class Save:
 	"""
@@ -20,7 +19,7 @@ class Save:
 			path = self.locator.find_latest(Config.save_path)
 			data = self.converter.convert(path)
 
-		parser = _Parser(data)
+		parser = Parser(data)
 
 		# Check save type
 		if parser.get_tactical_save():
@@ -34,12 +33,15 @@ class Save:
 		self.ironman = parser.get_ironman()
 		self.tactical_save = parser.get_tactical_save()
 
+		self.foundry = parser.get_foundry()
+		self.research = parser.get_research()
+
 		# Clean up JSON per Config setting
 		self.cleanup()
 			
 	def cleanup(self):
 		"""
-		Deletes the JSON file created by the converter, if it exists.
+		Deletes the JSON file created by the converter, if it exists, per Config.
 		"""
 		if not Config.keep_json:
 			try:

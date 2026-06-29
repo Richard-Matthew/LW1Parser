@@ -1,16 +1,12 @@
 PRIORITY (High->Low)
 ====================
 
-Split Foundry projects into Save object & update database
-- Switch to using checkpoints.checkpoint_table.m_arrFoundryUnlocks
+Track hidden potential rolls compared to average
 
-Add completed Research tracking
-
-Perk handling by class
-- Display in unlock order per class
-- Add bonus stat handling per class
+Conditional formatting on excel workbook
 
 Finalize database layout
+- Un-break database
 
 Alien Mission Tracking
 - Parse missions to fill out monthly table

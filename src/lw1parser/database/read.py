@@ -58,7 +58,7 @@ class _Read:
 				nick_name=row["nick_name"],
 				ingame_class=row["ingame_class"],
 				rank=row["rank"],
-				psi_rank=row["psi_rank"],
+				#psi_rank=row["psi_rank"],
 				xp=row["xp"],
 				psi_xp=row["psi_xp"],
 				kills=row["kills"],
@@ -68,8 +68,8 @@ class _Read:
 				mobility=row["mobility"],
 				willpower=row["will"],
 				defense=row["defense"],
-				perks={},
-				officer_perks=[],
+				class_perks={},
+				office_medals=[],
 				special=row["special"]
 			)
 
@@ -84,7 +84,7 @@ class _Read:
 			""", (unit_id, snapshot_id))
 
 			for p in cur.fetchall():
-				unit.perks[p["perk_id"]] = p["name"]
+				unit.class_perks[p["perk_id"]] = p["name"]
 
 
 			# Officer medals
@@ -95,7 +95,7 @@ class _Read:
 				WHERE um.unit_id = ? AND um.snapshot_id = ?
 			""", (unit_id, snapshot_id))
 
-			unit.officer_perks = {
+			unit.office_medals = {
 				m["medal_id"]: m["name"]
 				for m in cur.fetchall()
 			}

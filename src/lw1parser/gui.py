@@ -57,7 +57,7 @@ class GUI:
 			elif Config.use_database:
 				self.set_status("Save already exists in database.", "Blue")
 			else:
-				self.set_status("CSV export completed.", "Green")
+				self.set_status(f"{Config.spreadsheet_format} export completed.", "Green")
 				
 		except Exception as e:
 			self.set_status(f"Error: {e}", "Red")
@@ -78,7 +78,7 @@ class GUI:
 
 			Export.export_csv(units)
 
-			self.set_status("CSV export completed.", "Green")
+			self.set_status(f"{Config.spreadsheet_format} export completed.", "Green")
 		except Exception as e:
 			self.set_status(f"Error: {e}", "Red")
 
@@ -105,17 +105,17 @@ class GUI:
 				return
 			
 			export_path = filedialog.asksaveasfilename(
-				title = "Save CSV As",
+				title = f"Save {Config.spreadsheet_format} As",
 				defaultextension = ".csv",
-				filetypes=  [("CSV Files", "*.csv")]
+				filetypes=  self._get_export_file_extension()
 			)
 			if not export_path:
 				self.set_status("No export location selected.", "Blue")
 				return
 
-			path_to_csv(Path(save_path), Path(export_path))
+			path_to_csv(Config.spreadsheet_format, Path(save_path), Path(export_path))
 			
-			self.set_status(f"Converted to CSV: \n{save_path}", "Green")
+			self.set_status(f"Converted to {Config.spreadsheet_format}: \n{save_path}", "Green")
 
 		except Exception as e:
 			self.set_status(f"Error: {e}", "Red")
@@ -134,6 +134,14 @@ class GUI:
 		self.btn_analyze.config(state="normal" if Config.use_database else "disabled")
 
 		self.btn_analyze.pack_forget()
+
+	# Helpers
+	def _get_export_file_extension(self):
+		match Config.spreadsheet_format:
+			case "CSV":
+				return [("CSV Files", "*.csv")]
+			case "EXCEL":
+				return [("Excel Workbook", "*.xlsx")]
 
 def run_gui():
 	gui = GUI()

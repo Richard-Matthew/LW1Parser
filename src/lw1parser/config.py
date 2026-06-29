@@ -3,7 +3,7 @@ from pathlib import Path
 
 class Config:
 	"""
-	Holds values reads from the configuration file for reference
+	Holds values reads from the configuration file for reference.
 	"""
 	game_path: Path = Path()
 	save_path: Path = Path()
@@ -11,15 +11,22 @@ class Config:
 	use_gui: bool = True
 	keep_json: bool = False
 	convert_opens_save_folder: bool = False
+	spreadsheet_format: str = "CSV"
 
 	@staticmethod
 	def load_config(path = 'config.ini'):
-		parser = configparser.ConfigParser()
-		parser.read(path)
+		config_parser = configparser.ConfigParser()
+		config_parser.read(path)
 
-		Config.game_path = Path(parser["FILE PATHS"]["strXcomFolder"])
-		Config.save_path = Path(parser["FILE PATHS"]["strSaveFolder"])
-		Config.use_database = parser.getboolean("SETTINGS", "bUseDatabase")
-		Config.use_gui = parser.getboolean("SETTINGS", "bUseGUI")
-		Config.keep_json = parser.getboolean("SETTINGS", "bKeepJSON")
-		Config.convert_opens_save_folder = parser.getboolean("SETTINGS", "bConvertOpensSaveFolder")
+		Config.game_path = Path(config_parser["FILE PATHS"]["strXcomFolder"])
+		Config.save_path = Path(config_parser["FILE PATHS"]["strSaveFolder"])
+		Config.use_database = config_parser.getboolean("SETTINGS", "bUseDatabase")
+		Config.use_gui = config_parser.getboolean("SETTINGS", "bUseGUI")
+		Config.keep_json = config_parser.getboolean("SETTINGS", "bKeepJSON")
+		Config.convert_opens_save_folder = config_parser.getboolean("SETTINGS", "bConvertOpensSaveFolder")
+
+		user_spreadsheet_format = config_parser.get("SETTINGS", "strSpreadsheetFormat").upper()
+		if user_spreadsheet_format in ("EXCEL", "CSV"):
+			Config.spreadsheet_format = user_spreadsheet_format
+		
+		 

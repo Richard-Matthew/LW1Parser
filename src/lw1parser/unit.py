@@ -15,7 +15,7 @@ class Unit:
 	# Status
 	ingame_class: str
 	rank: int
-	psi_rank: int
+	special_rank: int
 	xp: int
 	psi_xp: int
 	kills: int
@@ -28,11 +28,18 @@ class Unit:
 	willpower: int
 	defense: int
 
-	# Perks, called upgrades before parsing
-	perks: dict[int, str] = field(default_factory=dict)
+	soml_mission_count: int #eStat_CouncilMedalAccrued Stat[6] ?
+	#unit_type: str # Bio, Psi, Officer, Mec, Shiv etc merge with unit.special?
 
-	# Officer perks stored as medals
-	officer_perks : list[int] = field(default_factory=list)
+	# Ordered perk dicts
+	class_perks: dict[int, str] = field(default_factory=dict)
+	officer_perks: dict[int, str] = field(default_factory=dict)
+	psi_perks: dict[int, str] = field(default_factory=dict)
+	gene_perks: dict[int, str] = field(default_factory=dict)
+	bonus_perks: dict[int, str] = field(default_factory=dict)
+
+	# Officer medals, linked to rank
+	office_medals : list[int] = field(default_factory=list)
 
 	# Misc spot
 	special: str = ""
@@ -41,15 +48,58 @@ class Unit:
 	db_id: int | None = field(default=None, init=False)
 
 
+	def to_dict_csv(self):
+		class_perks_list   = _csv_list(list(self.class_perks.values()))
+		officer_perks_list = _csv_list(list(self.officer_perks.values()))
+		psi_perks_list     = _csv_list(list(self.psi_perks.values()))
+		gene_mods_list     = _csv_list(list(self.gene_perks.values()))
+		bonus_perks_list   = _csv_list(list(self.bonus_perks.values()))
+
+		return {
+			"ingame_id": self.ingame_id,
+
+			"first_name": self.first_name,
+			"last_name": self.last_name,
+			"nick_name": self.nick_name,
+
+			"ingame_class": self.ingame_class,
+
+			"special": self.special,
+
+			"rank": self.rank,
+			"spec_rank": self.special_rank,
+
+			#"xp": self.xp,
+			#"psi_xp": self.psi_xp,
+
+			#"kills": self.kills,
+
+			"hp": self.hp,
+			"aim": self.aim,
+			"mobility": self.mobility,
+			"willpower": self.willpower,
+			"defense": self.defense,
+
+			"SOML": self.soml_mission_count,
+
+			"perks": class_perks_list,
+			"psi_perks": psi_perks_list,
+			"officer_perks": officer_perks_list,
+			"gene_mods": gene_mods_list,
+			"bonus_perks": bonus_perks_list,
+			
+			"kia_date": self.kia_date,
+		}
+	
 	def to_dict(self):
 		return {
 			"ingame_id": self.ingame_id,
 			"first_name": self.first_name,
-			"last_name": self.last_name,
 			"nick_name": self.nick_name,
+			"last_name": self.last_name,
 			"ingame_class": self.ingame_class,
 			"rank": self.rank,
-			"psi_rank": self.psi_rank,
+			#"psi_rank": self.psi_rank,
 			"xp": self.xp,
 			"psi_xp": self.psi_xp,
 			"kills": self.kills,
@@ -58,8 +108,10 @@ class Unit:
 			"mobility": self.mobility,
 			"willpower": self.willpower,
 			"defense": self.defense,
-			"perks": self.perks,
-			"officer_perks": self.officer_perks,
+			"class_perks": self.class_perks,
+			"officer_perks": self.office_medals,
+			"psi_perks": self.psi_perks,
+			#"SOML": self.soml_mission_count,
 			"kia_date": self.kia_date,
 			"special": self.special,
 		}
@@ -70,7 +122,7 @@ class Unit:
 		print(f"ID:          {self.ingame_id}")
 		print(f"Class:       {self.ingame_class}")
 		print(f"Rank:        {self.rank}")
-		print(f"Psi Rank:    {self.psi_rank}")
+		#print(f"Psi Rank:    {self.psi_rank}")
 		print(f"XP:          {self.xp}")
 		print(f"Psi XP:      {self.psi_xp}")
 		print(f"Kills:       {self.kills}")
@@ -84,17 +136,20 @@ class Unit:
 		print(f"  Defense:   {self.defense}")
 
 		print("\nOfficer Perks (Medals):")
-		if self.officer_perks:
-			print(f"  {self.officer_perks}")
+		if self.office_medals:
+			print(f"  {self.office_medals}")
 		else:
 			print("  None")
 
 		print("\nPerks:")
-		if self.perks:
-			for p in self.perks:
+		if self.class_perks:
+			for p in self.class_perks:
 				print(f"  - {p}")
 		else:
 			print("  None")
 
 		print(f"\nSpecial:     {self.special if self.special else 'None'}")
 		print("-" * 40)
+
+def _csv_list(values):
+	return ", ".join(values) if values else ""

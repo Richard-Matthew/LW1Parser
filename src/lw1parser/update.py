@@ -11,7 +11,7 @@ class Update:
 		if Config.use_database:
 			return self._save_db()
 		else:
-			Export.export_csv(self.save.units)
+			Export.export_csv(self.save)
 			return None
 
 	def _save_db(self):
