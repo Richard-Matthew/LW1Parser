@@ -1,5 +1,5 @@
 # Project specific
-unit_export.csv
+unit_export.*
 export.json
 stat hunting.json
 lw1parser.sqlite

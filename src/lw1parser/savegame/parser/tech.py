@@ -4,17 +4,18 @@ from lw1parser import maps
 class _Tech:
     @staticmethod
     def get_foundry(checkpoint_table: list) -> dict:
-        # Stored in checkpoints.checkpoint_table.Command1.TheWorld:PersistentLevel.XGFacility_Engineering_1.propertiers.m_arrFoundryHistory
+        # Stored in checkpoints.checkpoint_table.Command1.TheWorld:PersistentLevel.XGFacility_Engineering*.propertiers.m_arrFoundryHistory
         engineering = next((
             item for item in checkpoint_table 
-            if item["name"] == "Command1.TheWorld:PersistentLevel.XGFacility_Engineering_1"), 
-            None
+            if item["name"].startswith("Command1.TheWorld:PersistentLevel.XGFacility_Engineering")
+            ), None
         )
 
         foundry = next((
             item for item in engineering.get("properties", []) 
             if item["name"] == "m_arrFoundryHistory"), 
-            None)
+            None
+        )
         
         if foundry is None:
             return {}
@@ -28,11 +29,11 @@ class _Tech:
     
     @staticmethod
     def get_research(checkpoint_table: list) -> dict:
-        # Stored in checkpoints.checkpoint_table.Command1.TheWorld:PersistentLevel.XGFacility_Labs_1.propertiers.m_arrResearched
+        # Stored in checkpoints.checkpoint_table.Command1.TheWorld:PersistentLevel.XGFacility_Labs*.propertiers.m_arrResearched
         labs = next((
             item for item in checkpoint_table 
-            if item["name"] == "Command1.TheWorld:PersistentLevel.XGFacility_Labs_1"), 
-            None
+            if item["name"].startswith("Command1.TheWorld:PersistentLevel.XGFacility_Labs")
+            ), None
         )
 
         research = next((

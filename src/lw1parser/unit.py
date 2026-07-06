@@ -48,47 +48,53 @@ class Unit:
 	db_id: int | None = field(default=None, init=False)
 
 
-	def to_dict_csv(self):
+	def to_dict_spreadsheet(self):
 		class_perks_list   = _csv_list(list(self.class_perks.values()))
 		officer_perks_list = _csv_list(list(self.officer_perks.values()))
 		psi_perks_list     = _csv_list(list(self.psi_perks.values()))
 		gene_mods_list     = _csv_list(list(self.gene_perks.values()))
 		bonus_perks_list   = _csv_list(list(self.bonus_perks.values()))
 
+		if self.nick_name == "":
+			name = self.first_name + " " + self.last_name
+		else:
+			name = self.first_name + " '" + self.nick_name + "' " + self.last_name
+
 		return {
-			"ingame_id": self.ingame_id,
+			"ID": self.ingame_id,
 
-			"first_name": self.first_name,
-			"last_name": self.last_name,
-			"nick_name": self.nick_name,
+			#"first_name": self.first_name,
+			#"last_name": self.last_name,
+			#"nick_name": self.nick_name,
+			"Name": name,
 
-			"ingame_class": self.ingame_class,
+			"Class": self.ingame_class,
 
-			"special": self.special,
+			"Special": self.special,
 
-			"rank": self.rank,
-			"spec_rank": self.special_rank,
+			"Rank": self.rank,
+			"Spec": self.special_rank,
 
 			#"xp": self.xp,
 			#"psi_xp": self.psi_xp,
 
 			#"kills": self.kills,
 
-			"hp": self.hp,
-			"aim": self.aim,
-			"mobility": self.mobility,
-			"willpower": self.willpower,
-			"defense": self.defense,
+			"HP": self.hp,
+			"Aim": self.aim,
+			"Mob": self.mobility,
+			"Will": self.willpower,
+			"Def": self.defense,
 
 			"SOML": self.soml_mission_count,
 
-			"perks": class_perks_list,
-			"psi_perks": psi_perks_list,
-			"officer_perks": officer_perks_list,
-			"gene_mods": gene_mods_list,
-			"bonus_perks": bonus_perks_list,
+			"Class Perks": class_perks_list,
+			"Psi Perks": psi_perks_list,
+			"Officer Perks": officer_perks_list,
+			"Gene Mods": gene_mods_list,
+			"Bonus Perks": bonus_perks_list,
 			
-			"kia_date": self.kia_date,
+			"KIA Date": self.kia_date,
 		}
 	
 	def to_dict(self):
