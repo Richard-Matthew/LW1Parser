@@ -10,10 +10,5 @@ readme = "README.md"
 authors = [{ name = "Richard Matthew" }]
 requires-python = ">=3.11"
 
-dependencies = [
-    "tkinter",
-    "openpyxl"
-]
-
 [tool.setuptools.packages.find]
 where = ["src"]

@@ -1,5 +1,6 @@
 import configparser # https://docs.python.org/3/library/configparser.html
 from pathlib import Path
+import sys
 
 class Config:
 	"""
@@ -113,8 +114,17 @@ class Config:
 
 	@staticmethod
 	def load_config(path='config.ini'):
+		if getattr(sys, "frozen", False):
+			# Running inside PyInstaller EXE
+			base_dir = Path(sys.executable).parent
+		else:
+			# Running from source: config.ini lives next to launcher.py
+			base_dir = Path(__file__).resolve().parents[2]
+
+		config_path = base_dir / "config.ini"
+
 		config_parser = configparser.ConfigParser()
-		config_parser.read(path)
+		config_parser.read(config_path)
 
 		# FILE PATHS / SETTINGS
 		Config.game_path = Path(config_parser["FILE PATHS"]["strXcomFolder"])

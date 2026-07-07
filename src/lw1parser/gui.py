@@ -118,6 +118,8 @@ class GUI:
 			self.set_status(f"Converted to {Config.spreadsheet_format}: \n{save_path}", "Green")
 
 		except Exception as e:
+			import traceback
+			traceback.print_exc()
 			self.set_status(f"Error: {e}", "Red")
 		
 	

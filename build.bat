@@ -10,15 +10,16 @@ rmdir /s /q dist 2>nul
 
 REM Build in onedir mode (creates _internal folder)
 echo Running PyInstaller...
-pyinstaller --windowed --name LW1Parser --icon=icon.ico --paths src ^
+
+pyinstaller --windowed --name LW1Parser --icon=icon.ico ^
+    --paths src ^
     --add-data "src/lw1parser/resources;lw1parser/resources" ^
+    --hidden-import openpyxl ^
     launcher.py
 
-
 REM Copy external resources into the dist folder
-echo Copying config.ini and xcom2json.exe...
+echo Copying config.ini...
 copy config.ini dist\LW1Parser\ >nul
-copy xcom2json.exe dist\LW1Parser\ >nul
 
 echo ================================
 echo   Build complete!

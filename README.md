@@ -36,3 +36,7 @@ Windows:
 Compiling:
 - Python 3.11+
 - Plus a version of xcom2json that works on your system
+
+# Building
+1. Run "pip install -r requirements.txt"
+2. Run build.bat

@@ -4,6 +4,7 @@ export.json
 stat hunting.json
 lw1parser.sqlite
 xcom2json.exe
+tree.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
