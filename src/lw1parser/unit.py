@@ -1,7 +1,6 @@
 from dataclasses import dataclass, field
 
-# https://docs.python.org/3/library/dataclasses.html
-@dataclass
+@dataclass  # https://docs.python.org/3/library/dataclasses.html
 class Unit:
 	"""
 	Data class that holds unit information.
@@ -29,7 +28,6 @@ class Unit:
 	defense: int
 
 	soml_mission_count: int #eStat_CouncilMedalAccrued Stat[6] ?
-	#unit_type: str # Bio, Psi, Officer, Mec, Shiv etc merge with unit.special?
 
 	# Ordered perk dicts
 	class_perks: dict[int, str] = field(default_factory=dict)
@@ -38,10 +36,7 @@ class Unit:
 	gene_perks: dict[int, str] = field(default_factory=dict)
 	bonus_perks: dict[int, str] = field(default_factory=dict)
 
-	# Officer medals, linked to rank
-	office_medals : list[int] = field(default_factory=list)
-
-	# Misc spot
+	# MEC, Officer, or Psion
 	special: str = ""
 
 	# ID inside database for use with SQL, not initialized with the rest of Unit
@@ -61,7 +56,7 @@ class Unit:
 			name = self.first_name + " '" + self.nick_name + "' " + self.last_name
 
 		return {
-			"ID": self.ingame_id,
+			#"ID": self.ingame_id,
 
 			#"first_name": self.first_name,
 			#"last_name": self.last_name,
@@ -99,30 +94,44 @@ class Unit:
 	
 	def to_dict(self):
 		return {
+			# Identification
 			"ingame_id": self.ingame_id,
 			"first_name": self.first_name,
-			"nick_name": self.nick_name,
 			"last_name": self.last_name,
+			"nick_name": self.nick_name,
+
+			# Status
 			"ingame_class": self.ingame_class,
 			"rank": self.rank,
-			#"psi_rank": self.psi_rank,
+			"special_rank": self.special_rank,
 			"xp": self.xp,
 			"psi_xp": self.psi_xp,
 			"kills": self.kills,
+			"kia_date": self.kia_date,
+
+			#Stats
 			"hp": self.hp,
 			"aim": self.aim,
 			"mobility": self.mobility,
 			"willpower": self.willpower,
 			"defense": self.defense,
+
+			"soml_mission_count": self.soml_mission_count,
+
+			#Ordered perk dicts
 			"class_perks": self.class_perks,
 			"officer_perks": self.office_medals,
 			"psi_perks": self.psi_perks,
-			#"SOML": self.soml_mission_count,
-			"kia_date": self.kia_date,
+			"gene_perks": self.gene_perks,
+			"bonus_perks": self.bonus_perks,
+			
+			# MEC, Officer, or Psion
 			"special": self.special,
 		}
 
 
+"""
+# Depreciated
 	def console_print(self):
 		print(f"Name:        {self.first_name} '{self.nick_name}' {self.last_name}")
 		print(f"ID:          {self.ingame_id}")
@@ -156,6 +165,7 @@ class Unit:
 
 		print(f"\nSpecial:     {self.special if self.special else 'None'}")
 		print("-" * 40)
-
+"""
+		
 def _csv_list(values):
 	return ", ".join(values) if values else ""

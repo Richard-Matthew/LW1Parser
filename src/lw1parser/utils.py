@@ -1,11 +1,11 @@
 from pathlib import Path
 import sys
 
-from lw1parser.savegame import Save
+from lw1parser.savegame import Savegame
 from lw1parser.export import Export
 
 def path_to_csv(format: str, save_path: Path, export_path: Path) -> Path:
-    save = Save(save_path)
+    save = Savegame.load(save_path)
 
     Export.export_spreadsheet(format, save, export_path)
 

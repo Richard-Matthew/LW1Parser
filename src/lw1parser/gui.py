@@ -5,8 +5,8 @@ from pathlib import Path
 from lw1parser.config import Config
 from lw1parser.update import Update
 from lw1parser.export import Export
-from lw1parser.savegame import Save
-from lw1parser.database import Engine
+from lw1parser.savegame import Savegame
+from lw1parser.database import Database
 from lw1parser.utils import path_to_csv, resource_path
 
 
@@ -48,7 +48,7 @@ class GUI:
 		"""
 		try:
 			self.set_status("...", "Black")
-			save = Save()
+			save = Savegame.load()
 			update = Update(save)
 			was_inserted = update.do_update()
 
@@ -68,15 +68,15 @@ class GUI:
 			return
 		try:
 			self.set_status("...", "Black")
-			database = Engine()
+			database = Database()
 
-			units = database.get_units()
+			save = database.get_save()
 
-			if not units:
+			if not save:
 				self.set_status("No data found.", "Blue")
 				return
 
-			Export.export_csv(units)
+			Export.export_spreadsheet(Config.spreadsheet_format, save)
 
 			self.set_status(f"{Config.spreadsheet_format} export completed.", "Green")
 		except Exception as e:

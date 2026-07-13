@@ -1,11 +1,11 @@
-from lw1parser.maps import UPGRADE_MAP, MEDAL_MAP
+from lw1parser.maps import UPGRADE_MAP, FOUNDRY_UNLOCK_MAP, RESEARCH_UNLOCK_MAP
 
 class _Create:
 	def __init__(self, conn):
 		self.conn = conn
 
 	def create_tables(self):
-		# SQL statements freehanded then properly formatted and wrapped in cur.execute via Copilot
+		# SQL statements freehanded then formatted and wrapped in cur.execute via Copilot
 		cur = self.conn.cursor()
 
 		# Enable foreign keys
@@ -36,11 +36,13 @@ class _Create:
 		# snapshot (née update)
 		cur.execute("""
 		CREATE TABLE IF NOT EXISTS snapshot (
-			id          INTEGER PRIMARY KEY,
-			time_game   TEXT    NOT NULL,
-			time_real   TEXT    NOT NULL,
-			time_save   TEXT    NOT NULL,
-			save_number INTEGER NOT NULL
+			id          	INTEGER PRIMARY KEY,
+			time_game   	TEXT,
+			time_real   	TEXT,
+			time_save   	TEXT,
+			save_number 	INTEGER,
+			ironman			BOOLEAN,
+			tactical_save 	BOOLEAN
 		);
 		""")
 
@@ -51,26 +53,30 @@ class _Create:
 			snapshot_id  INTEGER NOT NULL,
 
 			-- Identification
-			first_name   TEXT NOT NULL,
-			last_name    TEXT NOT NULL,
-			nick_name    TEXT NOT NULL,
-			ingame_class TEXT NOT NULL,
+			ingame_id    INTEGER NOT NULL,
+			first_name   TEXT,
+			last_name    TEXT,
+			nick_name    TEXT,
+			ingame_class TEXT,
 
 			-- Status
-			rank         INTEGER NOT NULL,
-			psi_rank     INTEGER NOT NULL,
-			xp           INTEGER NOT NULL,
-			psi_xp       INTEGER NOT NULL,
-			kills        INTEGER NOT NULL,
-			kia_date     TEXT    NOT NULL,
-			special      TEXT    NOT NULL,
+			rank         INTEGER,
+			special_rank INTEGER,
+			xp           INTEGER,
+			psi_xp       INTEGER,
+			kills        INTEGER,
+			kia_date     TEXT   ,
 
 			-- Stats
-			hitpoints    INTEGER NOT NULL,
-			mobility     INTEGER NOT NULL,
-			will         INTEGER NOT NULL,
-			aim          INTEGER NOT NULL,
-			defense      INTEGER NOT NULL,
+			hp           INTEGER,
+			aim          INTEGER,
+			mobility     INTEGER,
+			willpower    INTEGER,
+			defense      INTEGER,
+
+			-- Other
+			soml_mission_count INTEGER,
+			special      TEXT,
 
 			PRIMARY KEY  (unit_id, snapshot_id),
 			FOREIGN KEY  (unit_id) REFERENCES unit(id),
@@ -86,43 +92,72 @@ class _Create:
 		);
 		""")
 
+		# perk_source
+		cur.execute("""
+		CREATE TABLE IF NOT EXISTS perk_source (
+			  id	INTEGER  PRIMARY KEY,
+			  name	TEXT     UNIQUE	      NOT NULL
+		);
+		""")
+		# Add values
+		self._insert_perk_source_definitions(cur)
+
 		# unit_perk
 		cur.execute("""
 		CREATE TABLE IF NOT EXISTS unit_perk (
 			unit_id     INTEGER NOT NULL,
 			snapshot_id INTEGER NOT NULL,
 			perk_id     INTEGER NOT NULL,
+			source_id	INTEGER NOT NULL,
 			PRIMARY KEY (unit_id, snapshot_id, perk_id),
-			FOREIGN KEY (unit_id) REFERENCES unit(id),
-			FOREIGN KEY (snapshot_id) REFERENCES snapshot(id),
-			FOREIGN KEY (perk_id) REFERENCES perk(id)
+			FOREIGN KEY (unit_id) 		REFERENCES unit(id),
+			FOREIGN KEY (snapshot_id) 	REFERENCES snapshot(id),
+			FOREIGN KEY (perk_id) 		REFERENCES perk(id),
+			FOREIGN KEY (source_id) 	REFERENCES perk_source(id)
 		);
 		""")
-		# Fill with values
+		# Add values
 		self._insert_perk_definitions(cur)
 
-		# medal
+		# foundry
 		cur.execute("""
-		CREATE TABLE IF NOT EXISTS medal (
+		CREATE TABLE IF NOT EXISTS foundry (
 			id   INTEGER PRIMARY KEY,
 			name TEXT    NOT NULL
 		);
 		""")
-
-		# unit_medal
+		self._insert_foundry_definitions(cur)
+		
+		# foundry_snapshot
 		cur.execute("""
-		CREATE TABLE IF NOT EXISTS unit_medal (
-			unit_id     INTEGER NOT NULL,
-			snapshot_id INTEGER NOT NULL,
-			medal_id    INTEGER NOT NULL,
-			PRIMARY KEY (unit_id, snapshot_id, medal_id),
-			FOREIGN KEY (unit_id) REFERENCES unit(id),
-			FOREIGN KEY (snapshot_id) REFERENCES snapshot(id),
-			FOREIGN KEY (medal_id) REFERENCES medal(id)
+		CREATE TABLE IF NOT EXISTS foundry_snapshot (
+			foundry_id  	INTEGER NOT NULL,
+			snapshot_id 	INTEGER NOT NULL,
+			PRIMARY KEY 	(snapshot_id, foundry_id),
+			FOREIGN KEY 	(snapshot_id) 	REFERENCES snapshot(id),
+			FOREIGN KEY 	(foundry_id) 	REFERENCES foundry(id)
 		);
 		""")
-		# Fill with values
-		self._insert_medal_definitions(cur)
+
+		# research
+		cur.execute("""
+		CREATE TABLE IF NOT EXISTS research (
+			id   INTEGER PRIMARY KEY,
+			name TEXT    NOT NULL
+		);
+		""")
+		self._insert_research_definitions(cur)
+
+		# research_snapshot
+		cur.execute("""
+		CREATE TABLE IF NOT EXISTS research_snapshot (
+			research_id  	INTEGER NOT NULL,
+			snapshot_id 	INTEGER NOT NULL,
+			PRIMARY KEY 	(snapshot_id, research_id),
+			FOREIGN KEY 	(snapshot_id) 	REFERENCES snapshot(id),
+			FOREIGN KEY 	(research_id) 	REFERENCES research(id)
+		);
+		""")
 
 		# Indexes
 		cur.execute("CREATE INDEX IF NOT EXISTS idx_unit_campaign ON unit(campaign_id);")
@@ -134,13 +169,30 @@ class _Create:
 	def _insert_perk_definitions(self, cur):
 		for perk_id, name in UPGRADE_MAP.items():
 			cur.execute("""
-				INSERT OR IGNORE INTO perk (id, name)
+			INSERT OR IGNORE INTO perk (id, name)
 				VALUES (?, ?)
 			""", (perk_id, name))
 
-	def _insert_medal_definitions(self, cur):
-		for medal_id, name in MEDAL_MAP.items():
+	def _insert_foundry_definitions(self, cur):
+		for perk_id, name in FOUNDRY_UNLOCK_MAP.items():
 			cur.execute("""
-				INSERT OR IGNORE INTO medal (id, name)
+			INSERT OR IGNORE INTO foundry (id, name)
 				VALUES (?, ?)
-			""", (medal_id, name))
+			""", (perk_id, name))
+
+	def _insert_research_definitions(self, cur):
+		for perk_id, name in RESEARCH_UNLOCK_MAP.items():
+			cur.execute("""
+			INSERT OR IGNORE INTO research (id, name)
+				VALUES (?, ?)
+			""", (perk_id, name))
+
+	def _insert_perk_source_definitions(self, cur):
+		cur.execute("""
+		INSERT OR IGNORE INTO perk_source (name) VALUES
+			('class'),
+			('officer'),
+			('psi'),
+			('gene'),
+			('bonus');
+		""")

@@ -5,9 +5,6 @@ Track hidden potential rolls compared to average
 
 More Conditional Formatting options
 
-Finalize database layout
-- Un-break database
-
 Alien Mission Tracking
 - Parse missions to fill out monthly table
 - Requires UPK modding to record Alien Resources & XCOM Threat levels used to generate missions

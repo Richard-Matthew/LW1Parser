@@ -1,50 +1,19 @@
-from lw1parser.config import Config
-from .locator import _Locator
-from .converter import _Converter
-from .parser import Parser
+from dataclasses import dataclass
 
-from pathlib import Path
-
+@dataclass  # https://docs.python.org/3/library/dataclasses.html
 class Save:
 	"""
-	Container class for loading and parsing data from a save file.
+	Data class that holds save information.
 	"""
-	def __init__(self, path: Path = None):
-		self.locator = _Locator()
-		self.converter = _Converter()
 
-		if path:
-			data = self.converter.convert(path)
-		else:
-			path = self.locator.find_latest(Config.save_path)
-			data = self.converter.convert(path)
+	units: list["Unit"]  # type: ignore # noqa: F821
+	game_time: str
+	save_time: str
+	current_time: str
+	game_number: int
+	save_number: int
+	ironman: bool
+	tactical_save: bool
 
-		parser = Parser(data)
-
-		# Check save type
-		if parser.get_tactical_save():
-			raise TypeError("Tactical saves are not supported")
-
-		# Information from save
-		self.units = parser.get_units()
-		self.game_time,	self.save_time, self.current_time = parser.get_times()
-		self.game_number = parser.get_game_number()
-		self.save_number = parser.get_save_number()
-		self.ironman = parser.get_ironman()
-		self.tactical_save = parser.get_tactical_save()
-
-		self.foundry = parser.get_foundry()
-		self.research = parser.get_research()
-
-		# Clean up JSON per Config setting
-		self.cleanup()
-			
-	def cleanup(self):
-		"""
-		Deletes the JSON file created by the converter, if it exists, per Config.
-		"""
-		if not Config.keep_json:
-			try:
-				self.converter.cleanup()
-			except OSError:
-				pass
+	foundry: dict[int, str]
+	research: dict[int, str]

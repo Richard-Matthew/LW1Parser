@@ -13,7 +13,7 @@ class Engine:
 
 		self.create = _Create(self.conn)
 		self.insert = _Update(self.conn)
-		self.extract = _Read(self.conn)
+		self.read = _Read(self.conn)
 
 		self.create.create_tables()
 
@@ -27,15 +27,11 @@ class Engine:
 		"""
 		return self.insert.insert_save(save)
 
-	# Potential for full Save class restoration from db
-	"""
-	 def get_save(self, campaign_id, save_number):
-		etc
-	"""
 
-	# Until then everything uses this to get unit stats
+	# New, reconstructs entire Save dataclass
+	def get_save(self, campaign_id: int = None, save_number: int = None):
+		return self.read.get_save()
+
+	# Old, only gets units, depreciated
 	def get_units(self, campaign_id = None):
-		return self._extract_units(campaign_id)
-
-	def _extract_units(self, campaign_id = None):
-		return self.extract.get_current_units(campaign_id)
+		return self.read.get_units(campaign_id)
