@@ -1,5 +1,6 @@
 from lw1parser import maps
 
+
 class _PropertyUtils:
     @staticmethod
     def get_property(props, name, default_return=None):
@@ -80,6 +81,6 @@ class _PropertyUtils:
         infra_class = kClass.get("strName", "")
 
         if infra_class == "":
-            return maps.CLASS_MAP.get(supra_class, supra_class)
+            return maps.SUPRA_CLASSES.get(supra_class, supra_class)
         else:
             return infra_class

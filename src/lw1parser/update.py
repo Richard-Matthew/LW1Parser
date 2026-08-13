@@ -1,13 +1,20 @@
 from lw1parser.config import Config
+from lw1parser.database import Database
 from lw1parser.export import Export
 from lw1parser.savegame import Save
-from lw1parser.database import Database
+
 
 class Update:
+	"""
+	Handles Update process by inserting into database or exporting a spreadsheet.
+	"""
 	def __init__(self, save: Save):
 		self.save = save
 
-	def do_update(self):
+	def do_update(self) -> bool | None:
+		"""
+		Returns True/False for database operations, None for spreadsheet export.
+		"""
 		if Config.use_database:
 			return self._save_db()
 		else:

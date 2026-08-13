@@ -1,4 +1,4 @@
-from importlib.metadata import version, PackageNotFoundError
+from importlib.metadata import PackageNotFoundError, version
 
 try:
     __version__ = version("lw1parser")
@@ -16,12 +16,12 @@ from .update import Update
 from .utils import path_to_csv
 
 __all__ = [
-    "Config",
     "GUI",
-    "run_gui",
+    "Config",
     "Save",
     "Update",
-    "path_to_csv",
-    "__version__",
     "__author__",
+    "__version__",
+    "path_to_csv",
+    "run_gui",
 ]

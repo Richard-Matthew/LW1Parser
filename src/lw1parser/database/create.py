@@ -1,4 +1,5 @@
-from lw1parser.maps import UPGRADE_MAP, FOUNDRY_UNLOCK_MAP, RESEARCH_UNLOCK_MAP
+from lw1parser.maps import FOUNDRY_UNLOCK_MAP, RESEARCH_UNLOCK_MAP, UPGRADE_MAP
+
 
 class _Create:
 	def __init__(self, conn):

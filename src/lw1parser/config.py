@@ -1,6 +1,7 @@
-import configparser # https://docs.python.org/3/library/configparser.html
-from pathlib import Path
+import configparser  # https://docs.python.org/3/library/configparser.html
 import sys
+from pathlib import Path
+
 
 class Config:
 	"""
@@ -16,6 +17,7 @@ class Config:
 	keep_json: bool = False
 	convert_opens_save_folder: bool = False
 	spreadsheet_format: str = "CSV"
+	include_deltas: bool = True
 
 	# CONDITIONAL FORMATTING
 	do_conditional_formatting: bool = True
@@ -107,10 +109,12 @@ class Config:
 	# Numeric column color scales
 	do_numeric_formatting: bool = True
 
-	numeric_columns: list[str] = []
+	numeric_columns: list[str]
 	min_fill: str = "F8696B"
 	mid_fill: str = "FFEB84"
 	max_fill: str = "63BE7B"
+
+	do_delta_formatting: bool = True
 
 	@staticmethod
 	def load_config(path='config.ini'):
@@ -138,6 +142,8 @@ class Config:
 		if user_spreadsheet_format in ("EXCEL", "CSV"):
 			Config.spreadsheet_format = user_spreadsheet_format
 
+		Config.include_deltas = config_parser.getboolean("SETTINGS", "bIncludeStatDeltas")
+		
 		# CONDITIONAL FORMATTING
 		cf = config_parser["CONDITIONAL FORMATTING"]
 
@@ -209,5 +215,8 @@ class Config:
 		Config.min_fill = cf["strMinFill"].upper()
 		Config.mid_fill = cf["strMidFill"].upper()
 		Config.max_fill = cf["strMaxFill"].upper()
+
+		# Delta formatting
+		Config.do_delta_formatting = cf.getboolean("bFormatDeltaColumns")
 		
 		 

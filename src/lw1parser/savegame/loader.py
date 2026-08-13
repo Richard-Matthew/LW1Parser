@@ -1,10 +1,12 @@
-from lw1parser.config import Config
-from .save import Save
-from .parser import Parser
-from .converter import _Converter
-
-from pathlib import Path
 import re
+from pathlib import Path
+
+from lw1parser.config import Config
+
+from .converter import _Converter
+from .parser import Parser
+from .save import Save
+
 
 class Loader:
 	"""
@@ -68,8 +70,6 @@ class Loader:
 			foundry 		= parser.get_foundry(),
 			research 		= parser.get_research(),
 		)
-
-		
 
 	def _cleanup(converter):
 		"""

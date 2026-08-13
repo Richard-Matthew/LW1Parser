@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 
+
 @dataclass  # https://docs.python.org/3/library/dataclasses.html
 class Unit:
 	"""
@@ -27,7 +28,7 @@ class Unit:
 	willpower: int
 	defense: int
 
-	soml_mission_count: int #eStat_CouncilMedalAccrued Stat[6] ?
+	soml_mission_count: int  # eStat_CouncilMedalAccrued Stat[6]
 
 	# Ordered perk dicts
 	class_perks: dict[int, str] = field(default_factory=dict)
@@ -43,7 +44,10 @@ class Unit:
 	db_id: int | None = field(default=None, init=False)
 
 
-	def to_dict_spreadsheet(self):
+	def to_dict_spreadsheet(self) -> dict:
+		"""
+		Returns a dict formatted for human usage via spreadsheet.
+		"""
 		class_perks_list   = _csv_list(list(self.class_perks.values()))
 		officer_perks_list = _csv_list(list(self.officer_perks.values()))
 		psi_perks_list     = _csv_list(list(self.psi_perks.values()))
@@ -92,7 +96,10 @@ class Unit:
 			"KIA Date": self.kia_date,
 		}
 	
-	def to_dict(self):
+	def to_dict(self) -> dict:
+		"""
+		Returns a serialized form of the object.
+		"""
 		return {
 			# Identification
 			"ingame_id": self.ingame_id,
@@ -128,44 +135,6 @@ class Unit:
 			# MEC, Officer, or Psion
 			"special": self.special,
 		}
-
-
-"""
-# Depreciated
-	def console_print(self):
-		print(f"Name:        {self.first_name} '{self.nick_name}' {self.last_name}")
-		print(f"ID:          {self.ingame_id}")
-		print(f"Class:       {self.ingame_class}")
-		print(f"Rank:        {self.rank}")
-		#print(f"Psi Rank:    {self.psi_rank}")
-		print(f"XP:          {self.xp}")
-		print(f"Psi XP:      {self.psi_xp}")
-		print(f"Kills:       {self.kills}")
-		print(f"KIA Date:    {self.kia_date if self.kia_date else 'Alive'}")
-
-		print("\nStats:")
-		print(f"  HP:        {self.hp}")
-		print(f"  Aim:       {self.aim}")
-		print(f"  Mobility:  {self.mobility}")
-		print(f"  Will:      {self.willpower}")
-		print(f"  Defense:   {self.defense}")
-
-		print("\nOfficer Perks (Medals):")
-		if self.office_medals:
-			print(f"  {self.office_medals}")
-		else:
-			print("  None")
-
-		print("\nPerks:")
-		if self.class_perks:
-			for p in self.class_perks:
-				print(f"  - {p}")
-		else:
-			print("  None")
-
-		print(f"\nSpecial:     {self.special if self.special else 'None'}")
-		print("-" * 40)
-"""
 		
 def _csv_list(values):
 	return ", ".join(values) if values else ""

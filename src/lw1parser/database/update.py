@@ -1,5 +1,6 @@
 from lw1parser.savegame import Save
 
+
 class _Update:
 	"""
 	Manages write operations for database.
@@ -117,7 +118,7 @@ class _Update:
 			row = cur.fetchone()
 
 			# Check if Unit db_id found
-			if row:
+			if row:  # noqa: SIM102
 				# Check if already KIA
 				if row["kia_date"] != "" and unit.kia_date != "":
 					# Unit has been KIA since last snapshot, skip
@@ -169,7 +170,7 @@ class _Update:
 
 				source_id = source_ids[source_name]
 
-				for perk_id, perk_name in perk_dict.items():
+				for perk_id in perk_dict:
 					cur.execute("""
 						INSERT INTO unit_perk (
 							unit_id, snapshot_id, perk_id, source_id
@@ -186,7 +187,7 @@ class _Update:
 		"""
 		Inserts foundry unlocks into foundry_snapshot bridge table.
 		"""
-		for foundry_id in unlocks.keys():
+		for foundry_id in unlocks:
 			cur.execute("""
 				INSERT INTO foundry_snapshot (
 					foundry_id, snapshot_id
@@ -200,7 +201,7 @@ class _Update:
 		"""
 		Inserts research unlocks into research_snapshot bridge table.
 		"""
-		for research_id in unlocks.keys():
+		for research_id in unlocks:
 			cur.execute("""
 				INSERT INTO research_snapshot (
 					research_id, snapshot_id

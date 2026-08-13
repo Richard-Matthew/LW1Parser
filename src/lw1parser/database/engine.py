@@ -1,8 +1,11 @@
-from lw1parser.savegame import Save
-from .create import _Create
-from .update import _Update
-from .read import _Read
 import sqlite3
+
+from lw1parser.savegame import Save
+
+from .create import _Create
+from .read import _Read
+from .update import _Update
+
 
 class Engine:
 	DB_NAME = "lw1parser.sqlite"
@@ -29,7 +32,7 @@ class Engine:
 
 
 	# New, reconstructs entire Save dataclass
-	def get_save(self, campaign_id: int = None, save_number: int = None):
+	def get_save(self, campaign_id: int | None = None, save_number: int | None = None):
 		return self.read.get_save()
 
 	# Old, only gets units, depreciated

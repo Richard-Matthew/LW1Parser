@@ -5,6 +5,7 @@ stat hunting.json
 lw1parser.sqlite
 xcom2json.exe
 tree.txt
+*.code-workspace
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

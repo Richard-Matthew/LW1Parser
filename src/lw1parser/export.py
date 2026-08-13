@@ -1,16 +1,24 @@
 import csv
 from pathlib import Path
+
 from openpyxl import Workbook
-from openpyxl.styles import PatternFill, Font, Alignment
-from openpyxl.formatting.rule import FormulaRule, ColorScaleRule
+from openpyxl.formatting.rule import ColorScaleRule, FormulaRule
+from openpyxl.styles import Alignment, Font, PatternFill
 from openpyxl.utils import get_column_letter
 
-from lw1parser.maps import MEDAL_MAP, PSI_RANK_MAP
 from lw1parser import Config
+from lw1parser.maps import CLASS_TYPES, MEDAL_MAP, PSI_RANK_MAP, expected_stat
 
-class Export():
+
+class Export:
+	"""
+	Handles export of information to a spreadsheet file.
+	"""
 	@staticmethod
 	def export_spreadsheet(format: str, save: "Save", save_path = None) -> None:  # type: ignore  # noqa: F821
+		"""
+		Writes save information to a file based on Config selected format.
+		"""
 		match format:
 			case "CSV":
 				Export.export_csv(save, save_path)
@@ -20,7 +28,7 @@ class Export():
 	@staticmethod
 	def export_csv(save: "Save", save_path: Path = Path("unit_export.csv")) -> None:  # type: ignore  # noqa: F821
 		"""
-		Writes unit stats to a .csv file.
+		Writes save information to a .csv file.
 		"""
 		if save_path is None:
 			save_path = Path("unit_export.csv")
@@ -35,7 +43,7 @@ class Export():
 	@staticmethod
 	def export_excel(save: "Save", save_path: Path = Path("unit_export.xlsx")) -> None:  # type: ignore  # noqa: F821
 		"""
-		Writes unit stats to a an excel workbook with formatting.
+		Writes save information to an excel workbook with formatting.
 		"""
 
 		# Poor structural decisions means an additional safeguard
@@ -49,12 +57,15 @@ class Export():
 		barracks.title = "Barracks"
 
 		headers = Export._write_barracks(barracks, save)
+		Export._write_stat_deltas(barracks, headers)
+
 		Export._apply_numeric_formatting(barracks, headers)
 		Export._apply_class_formatting(barracks, headers)
 		Export._apply_special_formatting(barracks, headers)
-		Export._resize_columns(barracks)
-		Export._center_columns(barracks, headers)
 
+		Export._center_columns(barracks, headers)
+		Export._resize_columns(barracks)
+		
 		# Campaign sheet
 		campaign = wb.create_sheet("Campaign")
 		Export._write_campaign(campaign, save)
@@ -63,32 +74,49 @@ class Export():
 		wb.save(save_path)
 
 	def _write_barracks(sheet, save: "Save") -> list[str]:  # type: ignore # noqa: F821
-		# Header row
-		headers = list(save.units[0].to_dict_spreadsheet().keys())
+		base_headers = list(save.units[0].to_dict_spreadsheet().keys())
+		delta_headers = ["ΔHP", "ΔAim", "ΔMob", "ΔWill", "ΔDef", "ΔPts"]
+
+		if Config.include_deltas:
+			try:
+				# Insert after SOML column
+				soml_index = base_headers.index("SOML") + 1
+			except ValueError:
+				# If SOML column doesn't exist insert to the right
+				soml_index = len(base_headers)
+
+			headers = (
+				base_headers[:soml_index] +
+				delta_headers +
+				base_headers[soml_index:]
+			)
+		else:
+			headers = base_headers
+
 		sheet.append(headers)
 
 		# Insert unit information
 		for unit in save.units:
-			sheet.append(list(unit.to_dict_spreadsheet().values()))
+			row = list(unit.to_dict_spreadsheet().values())
+
+			if Config.include_deltas:
+				row = (
+					row[:soml_index] +
+					[None] * len(delta_headers)
+					+ row[soml_index:]
+				)
+
+			sheet.append(row)
+
 
 		return headers
 
 	def _apply_numeric_formatting(sheet, headers: list[str]) -> None:
 		if not Config.do_numeric_formatting:
 			return
-		
-		# Build header → column letter map
-		header_to_column = {
-			header: chr(ord("A") + idx)
-			for idx, header in enumerate(headers)
-		}
 
-		# Convert config names → column letters
-		numeric_columns = [
-			header_to_column[name]
-			for name in Config.numeric_columns
-			if name in header_to_column
-		]
+		# Convert config names to column letters
+		numeric_columns = Export._get_numeric_columns(headers)
 
 		# Conditional formatting rule
 		color_rule = ColorScaleRule(
@@ -111,178 +139,22 @@ class Export():
 			special_idx = headers.index("Class")
 		except ValueError:
 			return
-		
+	
 		column_class = chr(ord("A") + special_idx)
 
-		# Generated with Copilot based on a template
-		# Bio
-		Export._add_text_fill_rule(
-			sheet, column_class,
-			"Rookie",
-			PatternFill(start_color=Config.rookie_fill, end_color=Config.rookie_fill, fill_type="solid"),
-			Config.rookie_text
-		)
+		for class_type, class_list in CLASS_TYPES.items():
+			bold = Config.bold_mec_classes and class_type == "MEC"
 
-		# Scout/Sniper supraclass
-		Export._add_text_fill_rule(
-			sheet, column_class,
-			"Scout-Sniper",
-			PatternFill(start_color=Config.scout_sniper_fill, end_color=Config.scout_sniper_fill, fill_type="solid"),
-			Config.scout_sniper_text
-		)
+			for cls in class_list:
+				cls_norm = cls.lower().replace("-", "_")
 
-		Export._add_text_fill_rule(
-			sheet, column_class,
-			"Scout",
-			PatternFill(start_color=Config.scout_fill, end_color=Config.scout_fill, fill_type="solid"),
-			Config.scout_text
-		)
-
-		Export._add_text_fill_rule(
-			sheet, column_class,
-			"Sniper",
-			PatternFill(start_color=Config.sniper_fill, end_color=Config.sniper_fill, fill_type="solid"),
-			Config.sniper_text
-		)
-
-		# Infantry/Assault supraclass
-		Export._add_text_fill_rule(
-			sheet, column_class,
-			"Tactical",
-			PatternFill(start_color=Config.tactical_fill, end_color=Config.tactical_fill, fill_type="solid"),
-			Config.tactical_text
-		)
-
-		Export._add_text_fill_rule(
-			sheet, column_class,
-			"Infantry",
-			PatternFill(start_color=Config.infantry_fill, end_color=Config.infantry_fill, fill_type="solid"),
-			Config.infantry_text
-		)
-
-		Export._add_text_fill_rule(
-			sheet, column_class,
-			"Assault",
-			PatternFill(start_color=Config.assault_fill, end_color=Config.assault_fill, fill_type="solid"),
-			Config.assault_text
-		)
-
-		# Gunner/Rocketeer supraclass
-		Export._add_text_fill_rule(
-			sheet, column_class,
-			"Weapons",
-			PatternFill(start_color=Config.weapons_fill, end_color=Config.weapons_fill, fill_type="solid"),
-			Config.weapons_text
-		)
-
-		Export._add_text_fill_rule(
-			sheet, column_class,
-			"Gunner",
-			PatternFill(start_color=Config.gunner_fill, end_color=Config.gunner_fill, fill_type="solid"),
-			Config.gunner_text
-		)
-
-		Export._add_text_fill_rule(
-			sheet, column_class,
-			"Rocketeer",
-			PatternFill(start_color=Config.rocketeer_fill, end_color=Config.rocketeer_fill, fill_type="solid"),
-			Config.rocketeer_text
-		)
-
-		# Support supraclass
-		Export._add_text_fill_rule(
-			sheet, column_class,
-			"Support",
-			PatternFill(start_color=Config.support_fill, end_color=Config.support_fill, fill_type="solid"),
-			Config.support_text
-		)
-
-		Export._add_text_fill_rule(
-			sheet, column_class,
-			"Medic",
-			PatternFill(start_color=Config.medic_fill, end_color=Config.medic_fill, fill_type="solid"),
-			Config.medic_text
-		)
-
-		Export._add_text_fill_rule(
-			sheet, column_class,
-			"Engineer",
-			PatternFill(start_color=Config.engineer_fill, end_color=Config.engineer_fill, fill_type="solid"),
-			Config.engineer_text
-		)
-
-		# Pathfinder
-		Export._add_text_fill_rule(
-			sheet, column_class,
-			"Pathfinder",
-			PatternFill(start_color=Config.pathfinder_fill, end_color=Config.pathfinder_fill, fill_type="solid"),
-			Config.pathfinder_text,
-			Config.bold_mec_classes
-		)
-
-		# Jaeger
-		Export._add_text_fill_rule(
-			sheet, column_class,
-			"Jaeger",
-			PatternFill(start_color=Config.jaeger_fill, end_color=Config.jaeger_fill, fill_type="solid"),
-			Config.jaeger_text,
-			Config.bold_mec_classes
-		)
-
-		# Valkyrie
-		Export._add_text_fill_rule(
-			sheet, column_class,
-			"Valkyrie",
-			PatternFill(start_color=Config.valkyrie_fill, end_color=Config.valkyrie_fill, fill_type="solid"),
-			Config.valkyrie_text,
-			Config.bold_mec_classes
-		)
-
-		# Marauder
-		Export._add_text_fill_rule(
-			sheet, column_class,
-			"Marauder",
-			PatternFill(start_color=Config.marauder_fill, end_color=Config.marauder_fill, fill_type="solid"),
-			Config.marauder_text,
-			Config.bold_mec_classes
-		)
-
-		# Goliath
-		Export._add_text_fill_rule(
-			sheet, column_class,
-			"Goliath",
-			PatternFill(start_color=Config.goliath_fill, end_color=Config.goliath_fill, fill_type="solid"),
-			Config.goliath_text,
-			Config.bold_mec_classes
-		)
-
-		# Archer
-		Export._add_text_fill_rule(
-			sheet, column_class,
-			"Archer",
-			PatternFill(start_color=Config.archer_fill, end_color=Config.archer_fill, fill_type="solid"),
-			Config.archer_text,
-			Config.bold_mec_classes
-		)
-
-		# Guardian
-		Export._add_text_fill_rule(
-			sheet, column_class,
-			"Guardian",
-			PatternFill(start_color=Config.guardian_fill, end_color=Config.guardian_fill, fill_type="solid"),
-			Config.guardian_text,
-			Config.bold_mec_classes
-		)
-
-		# Shogun
-		Export._add_text_fill_rule(
-			sheet, column_class,
-			"Shogun",
-			PatternFill(start_color=Config.shogun_fill, end_color=Config.shogun_fill, fill_type="solid"),
-			Config.shogun_text,
-			Config.bold_mec_classes
-		)
-
+				Export._add_text_fill_rule(
+					sheet, column_class,
+					cls,
+					PatternFill(start_color=getattr(Config, f"{cls_norm}_fill"), end_color=getattr(Config, f"{cls_norm}_fill"), fill_type="solid"),
+					getattr(Config, f"{cls_norm}_text", None),
+					bold
+				)
 
 	def _apply_special_formatting(sheet, headers) -> None:
 		if not Config.do_special_formatting:
@@ -358,11 +230,8 @@ class Export():
 			max_length = 0
 
 			for cell in column_cells:
-				try:
-					cell_value = str(cell.value)
-				except Exception:
-					cell_value = ""
-
+				cell_value = str(cell.value) if cell.value is not None else ""
+				
 				if cell_value:
 					max_length = max(max_length, len(cell_value))
 
@@ -373,21 +242,83 @@ class Export():
 			sheet.column_dimensions[column_letter].width = adjusted_width
 
 	def _center_columns(sheet, headers) -> None:
-		# Build header → column letter map
+		numeric_columns = Export._get_numeric_columns(headers)
+
+		# Apply center alignment
+		for col in numeric_columns:
+			for row in range(1, sheet.max_row + 1):
+				cell = sheet[f"{col}{row}"]
+				cell.alignment = Alignment(horizontal="center")
+
+	def _write_stat_deltas(sheet, headers) -> None:
+		if not Config.include_deltas:
+			return
+
 		header_to_column = {
 			header: get_column_letter(idx + 1)
 			for idx, header in enumerate(headers)
 		}
 
-		# Convert config names → column letters
+		delta_map = {
+			"ΔHP":   "HP",
+			"ΔAim":  "Aim",
+			"ΔMob":  "Mob",
+			"ΔWill": "Will",
+			"ΔDef":  "Def",
+		}
+
+		for delta_header, stat_header in delta_map.items():
+			delta_col = header_to_column[delta_header]
+			stat_col = header_to_column[stat_header]
+
+			for row in range(2, sheet.max_row + 1):
+				unit_class = sheet[f"{header_to_column['Class']}{row}"].value
+				unit_rank = sheet[f"{header_to_column['Rank']}{row}"].value
+				unit_stat = sheet[f"{stat_col}{row}"].value
+
+				stat_delta = unit_stat - expected_stat(unit_class, stat_header, unit_rank)
+				sheet[f"{delta_col}{row}"] = round(stat_delta, 2)
+
+		for row in range(2, sheet.max_row + 1):
+			pts = (
+			sheet[f"{header_to_column['ΔHP']}{row}"].value * 3 +
+			sheet[f"{header_to_column['ΔAim']}{row}"].value +
+			sheet[f"{header_to_column['ΔMob']}{row}"].value * 4 +
+			sheet[f"{header_to_column['ΔDef']}{row}"].value +
+			sheet[f"{header_to_column['ΔWill']}{row}"].value
+			)
+
+			sheet[f"{header_to_column['ΔPts']}{row}"] = round(pts, 2)
+
+	def _get_numeric_columns(headers):
+		"""
+		Returns an array of column letters for numeric columns.
+		"""
+		# Build header to column letter map
+		header_to_column = {
+			header: chr(ord("A") + idx)
+			for idx, header in enumerate(headers)
+		}
+
+		# Convert config names to column letters
 		numeric_columns = [
 			header_to_column[name]
 			for name in Config.numeric_columns
 			if name in header_to_column
 		]
 
-		# Apply center alignment starting at row 2
-		for col in numeric_columns:
-			for row in range(2, sheet.max_row + 1):
-				cell = sheet[f"{col}{row}"]
-				cell.alignment = Alignment(horizontal="center")
+		if Config.do_delta_formatting:
+			delta_columns = [
+				f"Δ{name}"
+				for name in Config.numeric_columns
+				if f"Δ{name}" in header_to_column
+			]
+
+			numeric_columns.extend(
+				header_to_column[name]
+				for name in delta_columns
+			)
+
+			numeric_columns.append(header_to_column["ΔPts"])
+
+		return numeric_columns

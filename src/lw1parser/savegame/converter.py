@@ -1,7 +1,8 @@
-import subprocess
 import json
+import subprocess
 import sys
 from pathlib import Path
+
 
 class _Converter:
 	def __init__(self):
@@ -14,12 +15,19 @@ class _Converter:
 		if not save_path.exists():
 			raise FileNotFoundError(f"Save file not found: {save_path}")
 
+
+		# Check for xcom2json.exe
+		exe_path = Path("xcom2json.exe")
+		if not exe_path.exists():
+			raise FileNotFoundError("Could not locate xcom2json.exe")
+
 		output_path = Path("export.json")
 		self.last_json_path = output_path
 
 		# Suppress console popup
 		result = subprocess.run(
 			["xcom2json.exe", "-o", str(output_path), str(save_path)],
+			check=True,
 			capture_output=True,
 			text=True,
 			creationflags=(
@@ -28,7 +36,7 @@ class _Converter:
 		)
 
 		if result.returncode != 0:
-			raise RuntimeError(f"xcom2json failed: {result.stderr}")
+			raise RuntimeError(f"xcom2json failed or missing: {result.stderr}")
 
 		with open(output_path, "r", encoding="utf-8") as f:
 			return json.load(f)

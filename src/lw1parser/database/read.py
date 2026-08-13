@@ -1,5 +1,6 @@
-from lw1parser.unit import Unit
 from lw1parser.savegame import Save
+from lw1parser.unit import Unit
+
 
 class _Read:
 	"""
