@@ -1,5 +1,5 @@
-import configparser  # https://docs.python.org/3/library/configparser.html
 import sys
+import tomllib
 from pathlib import Path
 
 
@@ -117,7 +117,7 @@ class Config:
 	do_delta_formatting: bool = True
 
 	@staticmethod
-	def load_config(path='config.ini'):
+	def load_config(path='config.toml'):
 		if getattr(sys, "frozen", False):
 			# Running inside PyInstaller EXE
 			base_dir = Path(sys.executable).parent
@@ -125,33 +125,36 @@ class Config:
 			# Running from source: config.ini lives next to launcher.py
 			base_dir = Path(__file__).resolve().parents[2]
 
-		config_path = base_dir / "config.ini"
+		config_path = base_dir / path
 
-		config_parser = configparser.ConfigParser()
-		config_parser.read(config_path)
+		with open(config_path, "rb") as file:
+			data = tomllib.load(file)
+
+		# TOML sections
+		fp = data["FILE_PATHS"]
+		st = data["SETTINGS"]
+		cf = data["CONDITIONAL_FORMATTING"]
 
 		# FILE PATHS / SETTINGS
-		Config.game_path = Path(config_parser["FILE PATHS"]["strXcomFolder"])
-		Config.save_path = Path(config_parser["FILE PATHS"]["strSaveFolder"])
-		Config.use_database = config_parser.getboolean("SETTINGS", "bUseDatabase")
-		Config.use_gui = config_parser.getboolean("SETTINGS", "bUseGUI")
-		Config.keep_json = config_parser.getboolean("SETTINGS", "bKeepJSON")
-		Config.convert_opens_save_folder = config_parser.getboolean("SETTINGS", "bConvertOpensSaveFolder")
+		Config.game_path 					= Path(fp["strXcomFolder"])
+		Config.save_path 					= Path(fp["strSaveFolder"])
+		Config.use_database 				= st["bUseDatabase"]
+		Config.use_gui 						= st["bUseGUI"]
+		Config.keep_json 					= st["bKeepJSON"]
+		Config.convert_opens_save_folder 	= st["bConvertOpensSaveFolder"]
 
-		user_spreadsheet_format = config_parser.get("SETTINGS", "strSpreadsheetFormat").upper()
-		if user_spreadsheet_format in ("EXCEL", "CSV"):
-			Config.spreadsheet_format = user_spreadsheet_format
+		format = st["strSpreadsheetFormat"].upper()
+		if format in ("EXCEL", "CSV"):
+			Config.spreadsheet_format = format
 
-		Config.include_deltas = config_parser.getboolean("SETTINGS", "bIncludeStatDeltas")
+		Config.include_deltas = st["bIncludeStatDeltas"]
 		
 		# CONDITIONAL FORMATTING
-		cf = config_parser["CONDITIONAL FORMATTING"]
+		Config.do_conditional_formatting = cf["bUseConditionalFormatting"]
+		Config.do_class_formatting = cf["bUseClassFormatting"]
+		Config.bold_mec_classes = cf["bBoldMECClasses"]
 
-		Config.do_conditional_formatting = cf.getboolean("bUseConditionalFormatting")
-		Config.do_class_formatting = cf.getboolean("bUseClassFormatting")
-		Config.bold_mec_classes = cf.getboolean("bBoldMECClasses")
-
-		# Bio
+        # Bio
 		Config.rookie_fill = cf["strRookieFill"].upper()
 		Config.rookie_text = cf["strRookieText"].upper()
 		Config.scout_sniper_fill = cf["strScout-SniperFill"].upper()
@@ -197,8 +200,8 @@ class Config:
 		Config.shogun_fill = cf["strShogunFill"].upper()
 		Config.shogun_text = cf["strShogunText"].upper()
 
-		# Special formatting
-		Config.do_special_formatting = cf.getboolean("bUseSpecialFormatting")
+        # Special formatting
+		Config.do_special_formatting = cf["bUseSpecialFormatting"]
 		Config.psi_fill = cf["strPsiFill"].upper()
 		Config.psi_text = cf["strPsiText"].upper()
 		Config.officer_fill = cf["strOfficerFill"].upper()
@@ -207,16 +210,13 @@ class Config:
 		Config.mec_text = cf["strMECText"].upper()
 
 		# Numeric formatting
-		Config.do_numeric_formatting = cf.getboolean("bUseNumericFormatting")
-
-		# Split on ", "
-		Config.numeric_columns = [s.strip() for s in cf["strNumericColums"].split(", ")]
-
+		Config.do_numeric_formatting = cf["bUseNumericFormatting"]
+		Config.numeric_columns = cf["strNumericColumns"]
 		Config.min_fill = cf["strMinFill"].upper()
 		Config.mid_fill = cf["strMidFill"].upper()
 		Config.max_fill = cf["strMaxFill"].upper()
 
 		# Delta formatting
-		Config.do_delta_formatting = cf.getboolean("bFormatDeltaColumns")
+		Config.do_delta_formatting = cf["bFormatDeltaColumns"]
 		
 		 
