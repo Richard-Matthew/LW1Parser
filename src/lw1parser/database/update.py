@@ -72,7 +72,7 @@ class _Update:
 		cur.execute("""
 			INSERT INTO snapshot (
 				time_game, time_real, time_save,
-			  	save_number, ironman, tactical_save
+				save_number, ironman, tactical_save
 			)
 			VALUES (?, ?, ?, ?, ?, ?)
 		""", (

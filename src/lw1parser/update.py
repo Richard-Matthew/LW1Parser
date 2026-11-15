@@ -1,6 +1,6 @@
 from lw1parser.config import Config
 from lw1parser.database import Database
-from lw1parser.export import Export
+from lw1parser.export import export_spreadsheet
 from lw1parser.savegame import Save
 
 
@@ -18,7 +18,7 @@ class Update:
 		if Config.use_database:
 			return self._save_db()
 		else:
-			Export.export_spreadsheet(Config.spreadsheet_format, self.save)
+			export_spreadsheet(Config.spreadsheet_format, self.save)
 			return None
 
 	def _save_db(self):

@@ -116,6 +116,10 @@ class Config:
 
 	do_delta_formatting: bool = True
 
+	# Stat progression stuff
+	lw_version: str = "LW1"
+	stat_progression: dict
+
 	@staticmethod
 	def load_config(path='config.toml'):
 		if getattr(sys, "frozen", False):
@@ -131,92 +135,104 @@ class Config:
 			data = tomllib.load(file)
 
 		# TOML sections
-		fp = data["FILE_PATHS"]
-		st = data["SETTINGS"]
-		cf = data["CONDITIONAL_FORMATTING"]
+		file_paths = data["FILE_PATHS"]
+		settings = data["SETTINGS"]
+		conditional_formatting = data["CONDITIONAL_FORMATTING"]
+		stat_progression = data["STAT_PROGRESSION"]
 
 		# FILE PATHS / SETTINGS
-		Config.game_path 					= Path(fp["strXcomFolder"])
-		Config.save_path 					= Path(fp["strSaveFolder"])
-		Config.use_database 				= st["bUseDatabase"]
-		Config.use_gui 						= st["bUseGUI"]
-		Config.keep_json 					= st["bKeepJSON"]
-		Config.convert_opens_save_folder 	= st["bConvertOpensSaveFolder"]
+		Config.game_path 					= Path(file_paths["strXcomFolder"])
+		Config.save_path 					= Path(file_paths["strSaveFolder"])
+		Config.use_database 				= settings["bUseDatabase"]
+		Config.use_gui 						= settings["bUseGUI"]
+		Config.keep_json 					= settings["bKeepJSON"]
+		Config.convert_opens_save_folder 	= settings["bConvertOpensSaveFolder"]
 
-		format = st["strSpreadsheetFormat"].upper()
+		format = settings["strSpreadsheetFormat"].upper()
 		if format in ("EXCEL", "CSV"):
 			Config.spreadsheet_format = format
 
-		Config.include_deltas = st["bIncludeStatDeltas"]
+		Config.include_deltas = settings["bIncludeStatDeltas"]
 		
 		# CONDITIONAL FORMATTING
-		Config.do_conditional_formatting = cf["bUseConditionalFormatting"]
-		Config.do_class_formatting = cf["bUseClassFormatting"]
-		Config.bold_mec_classes = cf["bBoldMECClasses"]
+		Config.do_conditional_formatting = conditional_formatting["bUseConditionalFormatting"]
+		Config.do_class_formatting = conditional_formatting["bUseClassFormatting"]
+		Config.bold_mec_classes = conditional_formatting["bBoldMECClasses"]
 
         # Bio
-		Config.rookie_fill = cf["strRookieFill"].upper()
-		Config.rookie_text = cf["strRookieText"].upper()
-		Config.scout_sniper_fill = cf["strScout-SniperFill"].upper()
-		Config.scout_sniper_text = cf["strScout-SniperText"].upper()
-		Config.scout_fill = cf["strScoutFill"].upper()
-		Config.scout_text = cf["strScoutText"].upper()
-		Config.sniper_fill = cf["strSniperFill"].upper()
-		Config.sniper_text = cf["strSniperText"].upper()
-		Config.tactical_fill = cf["strTacticalFill"].upper()
-		Config.tactical_text = cf["strTacticalText"].upper()
-		Config.infantry_fill = cf["strInfantryFill"].upper()
-		Config.infantry_text = cf["strInfantryText"].upper()
-		Config.assault_fill = cf["strAssaultFill"].upper()
-		Config.assault_text = cf["strAssaultText"].upper()
-		Config.weapons_fill = cf["strWeaponsFill"].upper()
-		Config.weapons_text = cf["strWeaponsText"].upper()
-		Config.gunner_fill = cf["strGunnerFill"].upper()
-		Config.gunner_text = cf["strGunnerText"].upper()
-		Config.rocketeer_fill = cf["strRocketeerFill"].upper()
-		Config.rocketeer_text = cf["strRocketeerText"].upper()
-		Config.support_fill = cf["strSupportFill"].upper()
-		Config.support_text = cf["strSupportText"].upper()
-		Config.medic_fill = cf["strMedicFill"].upper()
-		Config.medic_text = cf["strMedicText"].upper()
-		Config.engineer_fill = cf["strEngineerFill"].upper()
-		Config.engineer_text = cf["strEngineerText"].upper()
+		Config.rookie_fill = conditional_formatting["strRookieFill"].upper()
+		Config.rookie_text = conditional_formatting["strRookieText"].upper()
+		Config.scout_sniper_fill = conditional_formatting["strScout-SniperFill"].upper()
+		Config.scout_sniper_text = conditional_formatting["strScout-SniperText"].upper()
+		Config.scout_fill = conditional_formatting["strScoutFill"].upper()
+		Config.scout_text = conditional_formatting["strScoutText"].upper()
+		Config.sniper_fill = conditional_formatting["strSniperFill"].upper()
+		Config.sniper_text = conditional_formatting["strSniperText"].upper()
+		Config.tactical_fill = conditional_formatting["strTacticalFill"].upper()
+		Config.tactical_text = conditional_formatting["strTacticalText"].upper()
+		Config.infantry_fill = conditional_formatting["strInfantryFill"].upper()
+		Config.infantry_text = conditional_formatting["strInfantryText"].upper()
+		Config.assault_fill = conditional_formatting["strAssaultFill"].upper()
+		Config.assault_text = conditional_formatting["strAssaultText"].upper()
+		Config.weapons_fill = conditional_formatting["strWeaponsFill"].upper()
+		Config.weapons_text = conditional_formatting["strWeaponsText"].upper()
+		Config.gunner_fill = conditional_formatting["strGunnerFill"].upper()
+		Config.gunner_text = conditional_formatting["strGunnerText"].upper()
+		Config.rocketeer_fill = conditional_formatting["strRocketeerFill"].upper()
+		Config.rocketeer_text = conditional_formatting["strRocketeerText"].upper()
+		Config.support_fill = conditional_formatting["strSupportFill"].upper()
+		Config.support_text = conditional_formatting["strSupportText"].upper()
+		Config.medic_fill = conditional_formatting["strMedicFill"].upper()
+		Config.medic_text = conditional_formatting["strMedicText"].upper()
+		Config.engineer_fill = conditional_formatting["strEngineerFill"].upper()
+		Config.engineer_text = conditional_formatting["strEngineerText"].upper()
 
 		# MEC classes
-		Config.pathfinder_fill = cf["strPathfinderFill"].upper()
-		Config.pathfinder_text = cf["strPathfinderText"].upper()
-		Config.jaeger_fill = cf["strJaegerFill"].upper()
-		Config.jaeger_text = cf["strJaegerText"].upper()
-		Config.valkyrie_fill = cf["strValkyrieFill"].upper()
-		Config.valkyrie_text = cf["strValkyrieText"].upper()
-		Config.marauder_fill = cf["strMarauderFill"].upper()
-		Config.marauder_text = cf["strMarauderText"].upper()
-		Config.goliath_fill = cf["strGoliathFill"].upper()
-		Config.goliath_text = cf["strGoliathText"].upper()
-		Config.archer_fill = cf["strArcherFill"].upper()
-		Config.archer_text = cf["strArcherText"].upper()
-		Config.guardian_fill = cf["strGuardianFill"].upper()
-		Config.guardian_text = cf["strGuardianText"].upper()
-		Config.shogun_fill = cf["strShogunFill"].upper()
-		Config.shogun_text = cf["strShogunText"].upper()
+		Config.pathfinder_fill = conditional_formatting["strPathfinderFill"].upper()
+		Config.pathfinder_text = conditional_formatting["strPathfinderText"].upper()
+		Config.jaeger_fill = conditional_formatting["strJaegerFill"].upper()
+		Config.jaeger_text = conditional_formatting["strJaegerText"].upper()
+		Config.valkyrie_fill = conditional_formatting["strValkyrieFill"].upper()
+		Config.valkyrie_text = conditional_formatting["strValkyrieText"].upper()
+		Config.marauder_fill = conditional_formatting["strMarauderFill"].upper()
+		Config.marauder_text = conditional_formatting["strMarauderText"].upper()
+		Config.goliath_fill = conditional_formatting["strGoliathFill"].upper()
+		Config.goliath_text = conditional_formatting["strGoliathText"].upper()
+		Config.archer_fill = conditional_formatting["strArcherFill"].upper()
+		Config.archer_text = conditional_formatting["strArcherText"].upper()
+		Config.guardian_fill = conditional_formatting["strGuardianFill"].upper()
+		Config.guardian_text = conditional_formatting["strGuardianText"].upper()
+		Config.shogun_fill = conditional_formatting["strShogunFill"].upper()
+		Config.shogun_text = conditional_formatting["strShogunText"].upper()
 
         # Special formatting
-		Config.do_special_formatting = cf["bUseSpecialFormatting"]
-		Config.psi_fill = cf["strPsiFill"].upper()
-		Config.psi_text = cf["strPsiText"].upper()
-		Config.officer_fill = cf["strOfficerFill"].upper()
-		Config.officer_text = cf["strOfficerText"].upper()
-		Config.mec_fill = cf["strMECFill"].upper()
-		Config.mec_text = cf["strMECText"].upper()
+		Config.do_special_formatting = conditional_formatting["bUseSpecialFormatting"]
+		Config.psi_fill = conditional_formatting["strPsiFill"].upper()
+		Config.psi_text = conditional_formatting["strPsiText"].upper()
+		Config.officer_fill = conditional_formatting["strOfficerFill"].upper()
+		Config.officer_text = conditional_formatting["strOfficerText"].upper()
+		Config.mec_fill = conditional_formatting["strMECFill"].upper()
+		Config.mec_text = conditional_formatting["strMECText"].upper()
 
 		# Numeric formatting
-		Config.do_numeric_formatting = cf["bUseNumericFormatting"]
-		Config.numeric_columns = cf["strNumericColumns"]
-		Config.min_fill = cf["strMinFill"].upper()
-		Config.mid_fill = cf["strMidFill"].upper()
-		Config.max_fill = cf["strMaxFill"].upper()
+		Config.do_numeric_formatting = conditional_formatting["bUseNumericFormatting"]
+		Config.numeric_columns = conditional_formatting["strNumericColumns"]
+		Config.min_fill = conditional_formatting["strMinFill"].upper()
+		Config.mid_fill = conditional_formatting["strMidFill"].upper()
+		Config.max_fill = conditional_formatting["strMaxFill"].upper()
 
 		# Delta formatting
-		Config.do_delta_formatting = cf["bFormatDeltaColumns"]
+		Config.do_delta_formatting = conditional_formatting["bFormatDeltaColumns"]
+
+		# Stat progression stuff
+		valid_versions = ["LW1"]
+		Config.lw_version = stat_progression["strLongWarVersion"]
+		if Config.lw_version not in valid_versions:
+			Config.lw_version = "LW1"
+
+		Config.stat_progression = {
+			key:value
+			for key, value in stat_progression[Config.lw_version].items()
+		}
 		
 		 

@@ -7,17 +7,17 @@ SUPRA_CLASSES = {
 }
 
 CLASS_TYPES = {
-    "Unranked": SUPRA_CLASSES.values(),
-    "Biological": [
-        "Scout", "Sniper",
-        "Infantry", "Assault",
-        "Gunner", "Rocketeer",
-        "Medic", "Engineer"
+	"Unranked": SUPRA_CLASSES.values(),
+	"Biological": [
+		"Scout", "Sniper",
+		"Infantry", "Assault",
+		"Gunner", "Rocketeer",
+		"Medic", "Engineer"
 	],
-    "MEC": [
-        "Pathfinder", "Jaeger",
-        "Valkyrie", "Marauder",
-        "Goliath", "Archer",
-        "Guardian", "Shogun"
+	"MEC": [
+		"Pathfinder", "Jaeger",
+		"Valkyrie", "Marauder",
+		"Goliath", "Archer",
+		"Guardian", "Shogun"
 	],
 }

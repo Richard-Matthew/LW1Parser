@@ -1,10 +1,10 @@
 from importlib.metadata import PackageNotFoundError, version
 
 try:
-    __version__ = version("lw1parser")
+	__version__ = version("lw1parser")
 except PackageNotFoundError:
-    # When running from source without installation
-    __version__ = "0.0.0"
+	# When running from source without installation
+	__version__ = "0.0.0"
 
 __author__ = "Richard Matthew"
 
@@ -16,12 +16,12 @@ from .update import Update
 from .utils import path_to_csv
 
 __all__ = [
-    "GUI",
-    "Config",
-    "Save",
-    "Update",
-    "__author__",
-    "__version__",
-    "path_to_csv",
-    "run_gui",
+	"GUI",
+	"Config",
+	"Save",
+	"Update",
+	"__author__",
+	"__version__",
+	"path_to_csv",
+	"run_gui",
 ]

@@ -133,12 +133,17 @@ bFormatDeltaColumns = true
 # Stat Progression stuff
 # ----------------------------------------------------------
 
+[STAT_PROGRESSION]
+# Valid entries: "LW1"
+# Future entries: "LWR", "LW1_1", "BI"
+strLongWarVersion = "LW1"
+
 # ----------------------
 # Long War 1.0
 # ----------------------
 
 # Rookie base stats
-[LW1.Rookie]
+[STAT_PROGRESSION.LW1.Rookie]
 hp = 4
 aim = 65
 will = 30
@@ -148,7 +153,7 @@ def = 0
 # Hypothetical Rookie MEC base stats
 # MEC's starting will is actually (curr_will - avg_will)/5 + avg_will
 # Meaning they will inherit 20% of the difference of pre-chop will from whatever avg_will is defined as
-[LW1.RookieMEC]
+[STAT_PROGRESSION.LW1.RookieMEC]
 hp = 8
 aim = 65
 will = 30
@@ -156,56 +161,56 @@ mob = 13
 def = 0
 
 # Bio classes
-[LW1.Scout]
+[STAT_PROGRESSION.LW1.Scout]
 hp_gain = [0.2, 0.2, 0.5, 0.2, 0.2, 0.2, 0.5]
 aim_gain = [4, 3, 4, 3, 4, 3, 4]
 will_gain = [5.5, 5.5, 3.5, 3.5, 3.5, 3.5, 2.5]
 mob_gain = 1
 def_gain = 0
 
-[LW1.Sniper]
+[STAT_PROGRESSION.LW1.Sniper]
 hp_gain = [0.2, 0.2, 0.5, 0.2, 0.2, 0.2, 0.5]
 aim_gain = [4, 4, 4, 4, 4, 4, 4]
 will_gain = [5.5, 5.5, 3.5, 2.5, 2.5, 2.5, 2.5]
 mob_gain = 0
 def_gain = 0
 
-[LW1.Infantry]
+[STAT_PROGRESSION.LW1.Infantry]
 hp_gain = [0.6, 0.3, 0.3, 0.6, 0.3, 0.3, 0.6]
 aim_gain = [3, 3, 3, 3, 3, 3]
 will_gain = [5.5, 5.5, 3.5, 3.5, 3.5, 3.5, 3.5]
 mob_gain = 0
 def_gain = 0
 
-[LW1.Assault]
+[STAT_PROGRESSION.LW1.Assault]
 hp_gain = [0.7, 0.4, 0.7, 0.4, 0.7, 0.4, 0.7]
 aim_gain = [3, 2, 3, 2, 3, 2, 3]
 will_gain = [5.5, 5.5, 3.5, 3.5, 3.5, 3.5, 3.5]
 mob_gain = 0
 def_gain = 0
 
-[LW1.Gunner]
+[STAT_PROGRESSION.LW1.Gunner]
 hp_gain = [0.7, 0.4, 0.7, 0.4, 0.7, 0.4, 0.7]
 aim_gain = [3, 2, 3, 2, 3, 2, 3]
 will_gain = [5.5, 5.5, 3.5, 3.5, 3.5, 3.5, 3.5]
 mob_gain = 0
 def_gain = 0
 
-[LW1.Rocketeer]
+[STAT_PROGRESSION.LW1.Rocketeer]
 hp_gain = [0.6, 0.3, 0.3, 0.6, 0.3, 0.3, 0.6]
 aim_gain = [3, 3, 3, 3, 3, 3]
 will_gain = [5.5, 5.5, 3.5, 3.5, 3.5, 3.5, 3.5]
 mob_gain = 0
 def_gain = 0
 
-[LW1.Medic]
+[STAT_PROGRESSION.LW1.Medic]
 hp_gain = [0.6, 0.3, 0.3, 0.6, 0.3, 0.3, 0.6]
 aim_gain = [3, 2, 3, 2, 3, 2, 3]
 will_gain = [6.5, 6.5, 4, 3.5, 3.5, 3.5, 3.5]
 mob_gain = 1
 def_gain = 0
 
-[LW1.Engineer]
+[STAT_PROGRESSION.LW1.Engineer]
 hp_gain = [0.7, 0.4, 0.7, 0.4, 0.7, 0.4, 0.7]
 aim_gain = [3, 2, 3, 2, 3, 2, 3]
 will_gain = [5.5, 5.5, 3.5, 3.5, 3.5, 3.5, 3.5]
@@ -215,56 +220,56 @@ def_gain = 0
 # MEC classes
 # MEC base stats use the hypothetical MEC Rookie
 
-[LW1.Pathfinder]
+[STAT_PROGRESSION.LW1.Pathfinder]
 hp_gain = [0.7, 0.4, 0.7, 0.4, 0.7, 0.4, 0.7]
 aim_gain = [3, 3, 3, 3, 3, 3, 3]
 will_gain = [2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5]
 mob_gain = 0
 def_gain = 0
 
-[LW1.Jaeger]
+[STAT_PROGRESSION.LW1.Jaeger]
 hp_gain = [0.6, 0.2, 0.2, 0.6, 0.2, 0.2, 0.6]
 aim_gain = [4, 4, 4, 4, 4, 4, 4]
 will_gain = [2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5]
 mob_gain = 0
 def_gain = 0
 
-[LW1.Valkyrie]
+[STAT_PROGRESSION.LW1.Valkyrie]
 hp_gain = [0.7, 0.4, 0.7, 0.4, 0.7, 0.4, 0.7]
 aim_gain = [3, 3, 3, 3, 3, 3, 3]
 will_gain = [2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5]
 mob_gain = 0
 def_gain = 0
 
-[LW1.Marauder]
+[STAT_PROGRESSION.LW1.Marauder]
 hp_gain = [0.8, 0.5, 0.8, 0.8, 0.8, 0.5, 0.8]
 aim_gain = [2, 2, 2, 2, 2, 2, 2]
 will_gain = [2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5]
 mob_gain = 0
 def_gain = 0
 
-[LW1.Goliath]
+[STAT_PROGRESSION.LW1.Goliath]
 hp_gain = [0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99]
 aim_gain = [2, 1, 2, 1, 2, 1, 2]
 will_gain = [2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5]
 mob_gain = 0
 def_gain = 0
 
-[LW1.Archer]
+[STAT_PROGRESSION.LW1.Archer]
 hp_gain = [0.6, 0.3, 0.3, 0.6, 0.3, 0.3, 0.6]
 aim_gain = [2, 2, 2, 2, 2, 2, 2]
 will_gain = [2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5]
 mob_gain = 0
 def_gain = 0
 
-[LW1.Guardian]
+[STAT_PROGRESSION.LW1.Guardian]
 hp_gain = [0.7, 0.4, 0.7, 0.4, 0.7, 0.4, 0.7]
 aim_gain = [3, 3, 3, 3, 3, 3, 3]
 will_gain = [2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5]
 mob_gain = 0
 def_gain = 0
 
-[LW1.Shogun]
+[STAT_PROGRESSION.LW1.Shogun]
 hp_gain = [0.8, 0.5, 0.8, 0.8, 0.8, 0.5, 0.8]
 aim_gain = [3, 2, 3, 2, 3, 2, 3]
 will_gain = [2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5]
@@ -276,7 +281,7 @@ def_gain = 0
 # ----------------------
 
 # Rookie base stats
-[LWR.Rookie]
+[STAT_PROGRESSION.LWR.Rookie]
 hp = 4
 aim = 65
 will = 30

@@ -34,7 +34,7 @@ class Parser:
 		save_date = parts[0]
 		save_time = parts[1]
 
-		save_raw = datetime.strptime(  # noqa: DTZ007
+		save_raw = datetime.strptime(
 			f"{save_date} {save_time}",
 			"%m/%d/%Y %H:%M"
 		)
@@ -43,13 +43,13 @@ class Parser:
 		# Game timestamp
 		game_raw = parts[-1].strip()  # "6:38 am   March 10 2016"
 
-		game_dt = datetime.strptime(  # noqa: DTZ007
+		game_dt = datetime.strptime(
 			game_raw,
 			"%I:%M %p %B %d %Y"
 		)
 		game_iso = game_dt.isoformat()
 
-		current_iso = datetime.now().isoformat()  # noqa: DTZ005
+		current_iso = datetime.now().isoformat()
 
 		return game_iso, save_iso, current_iso
 

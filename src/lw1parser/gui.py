@@ -5,7 +5,7 @@ from tkinter import filedialog
 
 from lw1parser.config import Config
 from lw1parser.database import Database
-from lw1parser.export import Export
+from lw1parser.export import export_spreadsheet
 from lw1parser.savegame import Savegame
 from lw1parser.update import Update
 from lw1parser.utils import path_to_csv, resource_path
@@ -118,7 +118,7 @@ class GUI:
 			self._set_status("No data found.", "Blue")
 			return
 
-		Export.export_spreadsheet(Config.spreadsheet_format, save)
+		export_spreadsheet(Config.spreadsheet_format, save)
 
 		self._set_status(f"{Config.spreadsheet_format} export completed.", "Green")
 
