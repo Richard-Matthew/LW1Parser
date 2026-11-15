@@ -26,14 +26,6 @@ class Loader:
 
 		parser = Parser(data)
 
-		# Dear future self:
-		# If you really, really need to parse a tactical save it mostly works
-		# But they aren't supported by xcom2json and random errors sometimes happen
-
-		# Check save type
-		if parser.get_tactical_save():
-			raise TypeError("Tactical saves are not supported")
-
 		save = Loader._parse_save(parser)
 
 		# Clean up JSON per Config setting

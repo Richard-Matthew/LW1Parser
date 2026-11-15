@@ -3,6 +3,12 @@ import subprocess
 import sys
 from pathlib import Path
 
+from lw1parser.exceptions import (
+	TacticalSaveError,
+	Xcom2jsonMissingError,
+	Xcom2jsonUnknownError,
+)
+
 
 class _Converter:
 	def __init__(self):
@@ -26,7 +32,7 @@ class _Converter:
 
 		# Suppress console popup
 		try:
-			result = subprocess.run(
+			subprocess.run(
 				["xcom2json.exe", "-o", str(output_path), str(save_path)],
 				check=True,
 				capture_output=True,
@@ -35,10 +41,17 @@ class _Converter:
 					subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0
 				)
 			)
-		except subprocess.CalledProcessError:
-			raise RuntimeError(f"xcom2json failed or missing: {result.stderr}")
+		except FileNotFoundError as e:
+			raise Xcom2jsonMissingError("xcom2json.exe failed or missing") from e
 			
+		except subprocess.CalledProcessError as e:
+			stderr = e.stderr or ""
 
+			if "Saved games in tactical missions are not supported" in stderr:
+				raise TacticalSaveError from e
+
+			raise Xcom2jsonUnknownError(stderr) from e
+			
 		with open(output_path, "r", encoding="utf-8") as f:
 			return json.load(f)
 

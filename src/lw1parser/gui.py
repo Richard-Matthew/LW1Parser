@@ -5,6 +5,11 @@ from tkinter import filedialog
 
 from lw1parser.config import Config
 from lw1parser.database import Database
+from lw1parser.exceptions import (
+	TacticalSaveError,
+	Xcom2jsonMissingError,
+	Xcom2jsonUnknownError,
+)
 from lw1parser.export import export_spreadsheet
 from lw1parser.savegame import Savegame
 from lw1parser.update import Update
@@ -16,12 +21,25 @@ def gui_buttons(func):
 	def wrapper(self, *args, **kwargs):
 		try:
 			return func(self, *args, **kwargs)
+		
 		except (ValueError, NameError, KeyError) as e:
 			self._set_status(f"Error: {e}", "Red")
+
 		except PermissionError as e:
 			self._set_status(f"File Access Error: {e}\n", "Red")
+
 		except FileNotFoundError as e:
 			self._set_status(f"Missing File Error: {e}\n", "Red")
+
+		except TacticalSaveError:
+			self._set_status("Tactical saves are not supported.\nPlease use a geoscape save.\n", "Orange")
+
+		except Xcom2jsonMissingError as e:
+			self._set_status(f"xcom2json.exe missing: {e}\n", "Red")
+
+		except Xcom2jsonUnknownError as e:
+			self._set_status(f"An unknown error occured with xcom2json.exe, please report this error: {e}\n", "Red")
+
 		except Exception as e:  # noqa: BLE001
 			# Tkinter likes to silently hide error messages
 			self._set_status(f"Unknown Error: {e}\n", "Red")
